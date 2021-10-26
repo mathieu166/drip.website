@@ -64,7 +64,9 @@
 <script>
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-restricted-syntax */
-import { BRow, BCol, BBadge, BLInk } from 'bootstrap-vue'
+import {
+  BRow, BCol, BBadge,
+} from 'bootstrap-vue'
 import { Icon } from '@iconify/vue2'
 import LeaderboardTeamFaucet from './team-faucet/LeaderboardTeamFaucet.vue'
 import LeaderboardWinningCategory from './team-faucet/LeaderboardWiningCategory.vue'
@@ -76,7 +78,6 @@ export default {
     BCol,
     Icon,
     BBadge,
-    BLInk,
     LeaderboardWinningCategory,
     LeaderboardTeamFaucet,
   },

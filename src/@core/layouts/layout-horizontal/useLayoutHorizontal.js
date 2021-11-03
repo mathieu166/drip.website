@@ -12,6 +12,7 @@ export default function useLayoutHorizontal(navbarMenuType, footerType, isVertic
     } else {
       classes.push('vertical-overlay-menu')
       // classes.push('vertical-layout')
+      console.log(isVerticalMenuActive.value ? 'menu-open' : 'menu-hide')
       classes.push(isVerticalMenuActive.value ? 'menu-open' : 'menu-hide')
     }
 

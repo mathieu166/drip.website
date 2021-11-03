@@ -51,6 +51,10 @@ export default {
     },
   },
   beforeCreate() {
+
+    // Initialise wallet connection
+    store.dispatch('chain/init')
+
     // Set colors in theme
     const colors = ['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'light', 'dark']
 

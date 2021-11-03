@@ -35,7 +35,7 @@
 import { BLink, BImg, BButton } from 'bootstrap-vue'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 import store from '@/store/index'
-import { getHomeRouteForLoggedInUser } from '@/auth/utils'
+// import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 
 export default {
   components: {
@@ -58,8 +58,8 @@ export default {
   },
   methods: {
     loginRoute() {
-      const user = JSON.parse(localStorage.getItem('userData'))
-      return getHomeRouteForLoggedInUser(user ? user.role : null)
+      // const user = JSON.parse(localStorage.getItem('userData'))
+      return '/' // getHomeRouteForLoggedInUser(user ? user.role : null)
     },
   },
 }

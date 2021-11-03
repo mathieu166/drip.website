@@ -9,16 +9,16 @@ export const $themeBreakpoints = {}
 // APP CONFIG
 export const $themeConfig = {
   app: {
-    appName: 'Vuexy', // Will update name in navigation menu (Branding)
+    appName: 'DripNetwork', // Will update name in navigation menu (Branding)
     // eslint-disable-next-line global-require
     appLogoImage: require('@/assets/images/logo/logo.svg'), // Will update logo in navigation menu (Branding)
   },
   layout: {
     isRTL: false,
-    skin: 'light', // light, dark, bordered, semi-dark
+    skin: 'dark', // light, dark, bordered, semi-dark
     routerTransition: 'zoom-fade', // zoom-fade, slide-fade, fade-bottom, fade, zoom-out, none
-    type: 'vertical', // vertical, horizontal
-    contentWidth: 'full', // full, boxed
+    type: 'horizontal', // vertical, horizontal
+    contentWidth: 'boxed', // full, boxed
     menu: {
       hidden: false,
       isCollapsed: false,
@@ -31,7 +31,7 @@ export const $themeConfig = {
     footer: {
       type: 'static', // static, sticky, hidden
     },
-    customizer: true,
+    customizer: false,
     enableScrollToTop: true,
   },
 }

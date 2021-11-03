@@ -3,7 +3,7 @@
     <b-row>
       <b-col
         xl="8"
-        sm="12"
+        cols="12"
       >
         <b-row class="match-height">
           <b-col>
@@ -73,7 +73,7 @@
 
       <b-col
         xl="4"
-        md="12"
+        cols="12"
       >
         <b-row class="match-height">
           <b-col>

@@ -2,14 +2,17 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 // Routes
-import apps from './routes/apps'
+// import apps from './routes/apps'
 import leaderboards from './routes/leaderboards'
-import dashboard from './routes/dashboard'
-import uiElements from './routes/ui-elements/index'
-import pages from './routes/pages'
-import chartsMaps from './routes/charts-maps'
-import formsTable from './routes/forms-tables'
-import others from './routes/others'
+import search from './routes/search'
+// import dashboard from './routes/dashboard'
+// import uiElements from './routes/ui-elements/index'
+// import pages from './routes/pages'
+// import chartsMaps from './routes/charts-maps'
+// import formsTable from './routes/forms-tables'
+// import others from './routes/others'
+
+const defaultMenu = 'search'
 
 Vue.use(VueRouter)
 
@@ -20,15 +23,16 @@ const router = new VueRouter({
     return { x: 0, y: 0 }
   },
   routes: [
-    { path: '/', redirect: { name: 'dashboard-ecommerce' } },
-    ...leaderboards,
-    ...apps,
-    ...dashboard,
-    ...pages,
-    ...chartsMaps,
-    ...formsTable,
-    ...uiElements,
-    ...others,
+    { path: '/', redirect: { name: defaultMenu } },
+    // ...leaderboards,
+    ...search,
+    // ...apps,
+    // ...dashboard,
+    // ...pages,
+    // ...chartsMaps,
+    // ...formsTable,
+    // ...uiElements,
+    // ...others,
     {
       path: '*',
       redirect: 'error-404',

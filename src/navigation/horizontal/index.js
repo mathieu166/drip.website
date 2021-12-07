@@ -23,7 +23,8 @@ title
 route: [route_obj/route_name] (I have to resolve name somehow from the route obj)
 
 */
-import leaderboards from './leaderboards'
+// import leaderboards from './leaderboards'
+import search from './search'
 import dashboard from './dashboard'
 import apps from './apps'
 import pages from './pages'
@@ -34,7 +35,8 @@ import others from './others'
 
 // Array of sections
 export default [
-  ...leaderboards,
+  // ...leaderboards,
+  ...search,
   ...dashboard,
   ...apps,
   ...uiElements,

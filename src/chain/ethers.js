@@ -23,10 +23,11 @@ const connectBinanceChain = () => new Promise(resolve => {
 const getInjectedProvider = async addressCandidate => {
   try {
     // Metamask & Trust Wallet
-    let provider = window.ethereum
+    const provider = window.ethereum
     if (addressCandidate && provider) {
       try {
         const lastConnectedAddress = provider.selectedAddress
+        console.log(lastConnectedAddress)
         if (
           lastConnectedAddress
           && addressCandidate.toLowerCase() === lastConnectedAddress.toLowerCase()
@@ -38,21 +39,6 @@ const getInjectedProvider = async addressCandidate => {
       }
     }
 
-    // Binance Chain
-    provider = window.BinanceChain
-    if (addressCandidate && provider) {
-      try {
-        const addresses = await provider.enable()
-        if (
-          (addresses && addresses.length > 0)
-          && addressCandidate.toLowerCase() === addresses[0].toLowerCase()
-        ) {
-          return new ethers.providers.Web3Provider(provider)
-        }
-      } catch (e) {
-        // Do nothing
-      }
-    }
   } catch (e) {
     console.log(e)
   }

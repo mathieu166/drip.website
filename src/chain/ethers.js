@@ -27,7 +27,6 @@ const getInjectedProvider = async addressCandidate => {
     if (addressCandidate && provider) {
       try {
         const lastConnectedAddress = provider.selectedAddress
-        console.log(lastConnectedAddress)
         if (
           lastConnectedAddress
           && addressCandidate.toLowerCase() === lastConnectedAddress.toLowerCase()

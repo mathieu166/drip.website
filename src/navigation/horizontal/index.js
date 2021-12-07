@@ -25,23 +25,23 @@ route: [route_obj/route_name] (I have to resolve name somehow from the route obj
 */
 // import leaderboards from './leaderboards'
 import search from './search'
-import dashboard from './dashboard'
-import apps from './apps'
-import pages from './pages'
-import chartsAndMaps from './charts-and-maps'
-import uiElements from './ui-elements'
-import formAndTable from './forms-and-table'
-import others from './others'
+// import dashboard from './dashboard'
+// import apps from './apps'
+// import pages from './pages'
+// import chartsAndMaps from './charts-and-maps'
+// import uiElements from './ui-elements'
+// import formAndTable from './forms-and-table'
+// import others from './others'
 
 // Array of sections
 export default [
   // ...leaderboards,
   ...search,
-  ...dashboard,
-  ...apps,
-  ...uiElements,
-  ...formAndTable,
-  ...pages,
-  ...chartsAndMaps,
-  ...others,
+  // ...dashboard,
+  // ...apps,
+  // ...uiElements,
+  // ...formAndTable,
+  // ...pages,
+  // ...chartsAndMaps,
+  // ...others,
 ]

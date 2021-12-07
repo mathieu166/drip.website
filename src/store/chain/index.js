@@ -7,7 +7,7 @@ function sleep(ms) {
 export default {
   namespaced: true,
   state: {
-    provider: null, // JSON.parse(localStorage.getItem('campaign')),
+    provider: null,
     address: null,
   },
   getters: {},

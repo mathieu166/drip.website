@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import get from './get'
 
 const formatParam = (param, params) => {
@@ -15,11 +16,11 @@ export default function getAccounts(
   isSortDesc,
 ) {
   let params = ''
-  if (filters.address) {
-    params += formatParam(`address=${filters.address}`, params)
-  }
-  if (filters.buddy_address) {
-    params += formatParam(`buddy_address=${filters.buddy_address}`, params)
+
+  for (const [key, value] of Object.entries(filters)) {
+    if (value) {
+      params += formatParam(`${key}=${value}`, params)
+    }
   }
 
   params += formatParam(`page=${currentPage}`, params)

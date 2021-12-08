@@ -18,7 +18,7 @@
                   Address
                 </b-input-group-prepend>
                 <b-form-input
-                  v-model="address"
+                  v-model="filters.address"
                   autocomplete="off"
                   placeholder="0x000000000000000000000000000000000000"
                 />
@@ -39,13 +39,43 @@
                   Buddy
                 </b-input-group-prepend>
                 <b-form-input
-                  v-model="buddy"
+                  v-model="filters.buddy_address"
                   autocomplete="off"
                   placeholder="0x000000000000000000000000000000000000"
                 />
               </b-input-group>
             </form>
           </b-col>
+        </b-row>
+
+        <b-row class="mb-1">
+          <b-col
+            cols="12"
+            md="6"
+            class="d-flex align-items-center justify-content-start mb-1 mb-md-0"
+          >
+            <form
+              style="width: 100%;"
+              @submit.prevent="search"
+            >
+              <b-input-group class="input-group-merge">
+                <b-input-group-prepend is-text>
+                  Name
+                </b-input-group-prepend>
+                <b-form-input
+                  v-model="filters.name"
+                  autocomplete="off"
+                  placeholder="0x000000000000000000000000000000000000"
+                />
+              </b-input-group>
+            </form>
+          </b-col>
+
+          <b-col
+            cols="12"
+            md="6"
+            class="d-flex align-items-center justify-content-start mb-1 mb-md-0"
+          />
         </b-row>
 
         <b-row>
@@ -75,6 +105,18 @@
                   :options="perPageOptions"
                   :clearable="false"
                   class="per-page-selector d-inline-block ml-50 mr-1"
+                />
+              </div>
+              <div class="nowrap">
+                <label class="mr-1">Preset</label>
+                <v-select
+                  id="type"
+                  v-model="type"
+                  :options="types"
+                  :reduce="type => type.key"
+                  :clearable="false"
+                  label="label"
+                  class="type-selector d-inline-block mr-1"
                 />
               </div>
             </div>
@@ -141,6 +183,7 @@
         :sort-by.sync="sortBy"
         :sort-desc.sync="isSortDirDesc"
         :busy="isLoading"
+        select-mode="single"
         primary-key="address"
         show-empty
         empty-text="No matching records found"
@@ -289,11 +332,9 @@ import {
   BTooltip,
 } from 'bootstrap-vue'
 import { ref, computed, watch } from '@vue/composition-api'
-// import { useResponsiveAppLeftSidebarVisibility } from '@core/comp-functions/ui/app'
+
 import vSelect from 'vue-select'
 import getAccounts from '@/http/getAccounts'
-
-// import store from '@/store'
 
 export default {
   components: {
@@ -347,6 +388,7 @@ export default {
     const refAccountList = ref(null)
     const btnSearch = ref(null)
     const address = ref(null)
+    const name = ref(null)
     const buddy = ref(null)
     const search = ref(() => {})
 
@@ -369,9 +411,9 @@ export default {
     const perPage = ref(10)
     const totalAccounts = ref(0)
     const currentPage = ref(1)
-    const perPageOptions = [10, 25, 50, 100]
-    const sortBy = ref('address')
-    const isSortDirDesc = ref(true)
+    const perPageOptions = [5, 10, 25, 50, 100]
+    const sortBy = ref('net_deposits')
+    const isSortDirDesc = ref(false)
 
     const dataMeta = computed(() => {
       const localItemsCount = refAccountList.value
@@ -391,18 +433,36 @@ export default {
       refAccountList.value.refresh()
     }
 
-    watch([currentPage, perPage], () => {
-      refetchData()
+    const types = ref([
+      { key: 'all', label: 'All Drippers' },
+      { key: 'faucet', label: 'Faucet Drippers' },
+      { key: 'team', label: 'Team Wallet ( > 5 directs)' },
+    ])
+    const type = ref('all')
+    const filters = ref({ type })
+
+    let timeout
+    watch([currentPage, perPage, type], () => {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
+
+      timeout = setTimeout(() => {
+        refetchData()
+        timeout = null
+      }, 500)
     })
 
     const fetchAccounts = (ctx, callback) => {
       isLoading.value = true
-      const filters = {
-        address: address.value,
-        buddy_address: buddy.value,
-      }
+      // const filters = {
+      //   address: address.value,
+      //   buddy_address: buddy.value,
+      //   name: name.value,
+      // }
+      console.log(filters.value)
       getAccounts(
-        filters,
+        filters.value,
         currentPage.value,
         perPage.value,
         sortBy.value,
@@ -419,12 +479,17 @@ export default {
     }
 
     const clear = () => {
-      address.value = null
-      buddy.value = null
+      filters.value.address = null
+      filters.value.buddy_adress = null
+      filters.value.name = null
+      type.value = 'all'
+
       refetchData()
     }
 
     return {
+      filters,
+      name,
       search,
       clear,
       sortBy,
@@ -441,6 +506,8 @@ export default {
       perPageOptions,
       dataMeta,
       fetchAccounts,
+      type,
+      types,
     }
   },
 }
@@ -450,14 +517,7 @@ export default {
 .per-page-selector {
   width: 90px;
 }
-.item-view-radio-group ::v-deep {
-  .btn {
-    display: flex;
-    align-items: center;
-  }
+.type-selector {
+  width: 250px;
 }
-</style>
-<style lang="scss">
-@import '@core/scss/vue/libs/vue-select.scss';
-@import '~@core/scss/base/pages/app-ecommerce.scss';
 </style>

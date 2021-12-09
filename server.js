@@ -1,8 +1,10 @@
 const express = require('express')
+const helmet = require('helmet')
 
 const port = process.env.PORT || 8080
 const app = express()
 
+app.use(helmet())
 // Force HTTPS redirection
 app.use((req, res, next) => {
   if (req.secure || req.headers['x-forwarded-proto'] === 'https') {

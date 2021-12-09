@@ -65,7 +65,7 @@
                 <b-form-input
                   v-model="filters.name"
                   autocomplete="off"
-                  placeholder="0x000000000000000000000000000000000000"
+                  placeholder="Team XYZ"
                 />
               </b-input-group>
             </form>

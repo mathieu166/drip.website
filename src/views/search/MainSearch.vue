@@ -108,7 +108,7 @@
                 />
               </div>
               <div class="nowrap">
-                <label class="mr-1">Preset</label>
+                <label class="mr-1">Presets</label>
                 <v-select
                   id="type"
                   v-model="type"
@@ -215,9 +215,21 @@
           </div>
         </template>
         <template #cell(net_deposits)="data">
-          <div>
+          <div :id="`netdeposits-${data.item.address}`">
             {{ toFixed(data.item.net_deposits, 2) }}
           </div>
+          <b-tooltip
+            :target="`netdeposits-${data.item.address}`"
+            style="white-space: nowrap;"
+            placement="topleft"
+          >
+            {{ toFixed(data.item.net_deposits, 2, '0') }} = ({{
+              toFixed(data.item.deposits, 2, '0')
+            }}
+            + {{ toFixed(data.item.airdrops_total, 2, '0') }} +
+            {{ toFixed(data.item.rolls, 2, '0') }}) -
+            {{ toFixed(data.item.total_payouts, 2, '0') }}
+          </b-tooltip>
         </template>
         <template #cell(deposits)="data">
           <div>
@@ -370,8 +382,11 @@ export default {
 
       return new Date(value * 1000).toLocaleDateString()
     },
-    toFixed(value, decimals) {
+    toFixed(value, decimals, defaultValue) {
       if (!value) {
+        if (defaultValue) {
+          return defaultValue
+        }
         return ''
       }
 
@@ -398,9 +413,9 @@ export default {
       { key: 'name', sortable: true },
       { key: 'net_deposits', label: 'net deposits', sortable: true },
       { key: 'deposits', sortable: true },
-      { key: 'total_payouts', label: 'claimed', sortable: true },
-      { key: 'rolls', label: 'Hydrated', sortable: true },
       { key: 'airdrops_total', label: 'airdrops sent', sortable: true },
+      { key: 'rolls', label: 'Hydrated', sortable: true },
+      { key: 'total_payouts', label: 'claimed', sortable: true },
       { key: 'referrals', label: 'team directs', sortable: true },
       { key: 'total_structure', label: 'team total', sortable: true },
       { key: 'lastAirdrop', sortable: true },

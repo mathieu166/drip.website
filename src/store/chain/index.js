@@ -56,9 +56,8 @@ export default {
             }
           })
       } else {
-        console.log('remove address')
-        console.trace()
         state.address = null
+        state.signature = null
         localStorage.removeItem('address')
       }
     },

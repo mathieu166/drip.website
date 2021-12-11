@@ -92,8 +92,8 @@
                   Clear
                 </b-button>
               </div>
-              <div class="d-flex mb-0">
-                <div class="nowrap">
+              <div class="d-flex flex-md-row flex-column-reverse mb-0">
+                <div class="nowrap mb-0">
                   <label class="mr-1">Entries</label>
                   <v-select
                     v-model="perPage"
@@ -103,7 +103,7 @@
                     class="per-page-selector d-inline-block mr-1"
                   />
                 </div>
-                <div class="nowrap">
+                <div class="nowrap mb-1 mb-md-0">
                   <label class="mr-1">Presets</label>
                   <v-select
                     id="type"
@@ -529,6 +529,6 @@ export default {
   width: 90px;
 }
 .type-selector {
-  width: 250px;
+  width: 200px;
 }
 </style>

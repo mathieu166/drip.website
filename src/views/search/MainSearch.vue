@@ -22,6 +22,14 @@
                   autocomplete="off"
                   placeholder="0x000000000000000000000000000000000000"
                 />
+                <b-input-group-append v-if="walletAddress">
+                  <b-button
+                    variant="outline-dark"
+                    @click="setAddressToWallet()"
+                  >
+                    Me
+                  </b-button>
+                </b-input-group-append>
               </b-input-group>
             </form>
           </b-col>
@@ -42,6 +50,14 @@
                   autocomplete="off"
                   placeholder="0x000000000000000000000000000000000000"
                 />
+                <b-input-group-append v-if="walletAddress">
+                  <b-button
+                    variant="outline-dark"
+                    @click="setBuddyToWallet()"
+                  >
+                    Me
+                  </b-button>
+                </b-input-group-append>
               </b-input-group>
             </form>
           </b-col>
@@ -336,6 +352,7 @@ import {
   BPagination,
   BInputGroup,
   BInputGroupPrepend,
+  BInputGroupAppend,
   BButton,
   BSpinner,
   BTooltip,
@@ -343,6 +360,8 @@ import {
 import { ref, computed, watch } from '@vue/composition-api'
 import vSelect from 'vue-select'
 import getAccounts from '@/http/getAccounts'
+import store from '@/store'
+// import Tour from './Tour.vue'
 
 export default {
   components: {
@@ -358,6 +377,8 @@ export default {
     BInputGroupPrepend,
     BSpinner,
     BTooltip,
+    BInputGroupAppend,
+    // Tour,
   },
   mounted() {
     this.search = () => {
@@ -450,7 +471,7 @@ export default {
       { key: 'team', label: 'Team Wallet ( > 5 directs)' },
     ])
     const type = ref('all')
-    const filters = ref({ type })
+    const filters = ref({ type, address: null, buddy_address: null })
 
     let timeout
     watch([currentPage, perPage, type], () => {
@@ -466,12 +487,6 @@ export default {
 
     const fetchAccounts = (ctx, callback) => {
       isLoading.value = true
-      // const filters = {
-      //   address: address.value,
-      //   buddy_address: buddy.value,
-      //   name: name.value,
-      // }
-      console.log(filters.value)
       getAccounts(
         filters.value,
         currentPage.value,
@@ -491,10 +506,29 @@ export default {
 
     const clear = () => {
       filters.value.address = null
-      filters.value.buddy_adress = null
+      filters.value.buddy_address = null
       filters.value.name = null
       type.value = 'all'
 
+      refetchData()
+    }
+
+    const walletAddress = ref(null)
+
+    store.watch(
+      state => state.chain.address,
+      addr => {
+        walletAddress.value = addr
+      },
+    )
+
+    const setAddressToWallet = () => {
+      filters.value.address = walletAddress.value
+      refetchData()
+    }
+
+    const setBuddyToWallet = () => {
+      filters.value.buddy_address = walletAddress.value
       refetchData()
     }
 
@@ -519,12 +553,18 @@ export default {
       fetchAccounts,
       type,
       types,
+      walletAddress,
+      setAddressToWallet,
+      setBuddyToWallet,
     }
   },
 }
 </script>
 
 <style lang="scss" scoped>
+.form-control {
+  height: inherit;
+}
 .per-page-selector {
   width: 90px;
 }

@@ -5,7 +5,8 @@ const app = express()
 
 // Force HTTPS redirection
 app.use((req, res, next) => {
-  if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
+  const nodeEnv = process.env.NODE_ENV
+  if (!nodeEnv || nodeEnv !== 'production' || req.secure || req.headers['x-forwarded-proto'] === 'https') {
     return next()
   }
   return res.redirect(`https://${req.headers.host}${req.url}`)

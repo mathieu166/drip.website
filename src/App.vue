@@ -51,7 +51,7 @@ export default {
   },
   mounted() {
     // Initialise wallet connection
-    // store.dispatch('chain/init')
+    store.dispatch('chain/init')
   },
   beforeCreate() {
     // Set colors in theme

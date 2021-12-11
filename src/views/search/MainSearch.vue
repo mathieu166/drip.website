@@ -7,7 +7,7 @@
           <b-col
             cols="12"
             md="6"
-            class="d-flex align-items-center justify-content-start mb-1 mb-md-0"
+            class="mb-1 mb-md-0"
           >
             <form
               style="width: 100%;"
@@ -28,7 +28,6 @@
           <b-col
             cols="12"
             md="6"
-            class="d-flex align-items-center justify-content-start mb-1 mb-md-0"
           >
             <form
               style="width: 100%;"
@@ -48,7 +47,7 @@
           </b-col>
         </b-row>
 
-        <b-row class="mb-1">
+        <b-row class="mb-0 mb-md-1">
           <b-col
             cols="12"
             md="6"
@@ -70,54 +69,52 @@
               </b-input-group>
             </form>
           </b-col>
-
-          <b-col
-            cols="12"
-            md="6"
-            class="d-flex align-items-center justify-content-start mb-1 mb-md-0"
-          />
         </b-row>
 
         <b-row>
           <b-col cols="12">
-            <div class="d-flex">
-              <b-button
-                ref="btnSearch"
-                variant="primary"
-                class="mr-2"
-                @click="search"
-              >
-                Search
-              </b-button>
-              <b-button
-                ref="btnSearch"
-                variant="secondary"
-                class="mr-2"
-                @click="clear"
-              >
-                Clear
-              </b-button>
-              <div class="nowrap">
-                <label>Entries</label>
-                <v-select
-                  v-model="perPage"
-                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                  :options="perPageOptions"
-                  :clearable="false"
-                  class="per-page-selector d-inline-block ml-50 mr-1"
-                />
+            <div class="d-flex flex-md-row flex-column-reverse">
+              <div class="d-flex mt-1 mt-md-0">
+                <b-button
+                  ref="btnSearch"
+                  variant="primary"
+                  class="mr-2"
+                  @click="search"
+                >
+                  Search
+                </b-button>
+                <b-button
+                  ref="btnSearch"
+                  variant="secondary"
+                  class="mr-2"
+                  @click="clear"
+                >
+                  Clear
+                </b-button>
               </div>
-              <div class="nowrap">
-                <label class="mr-1">Presets</label>
-                <v-select
-                  id="type"
-                  v-model="type"
-                  :options="types"
-                  :reduce="type => type.key"
-                  :clearable="false"
-                  label="label"
-                  class="type-selector d-inline-block mr-1"
-                />
+              <div class="d-flex mb-0">
+                <div class="nowrap">
+                  <label class="mr-1">Entries</label>
+                  <v-select
+                    v-model="perPage"
+                    :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                    :options="perPageOptions"
+                    :clearable="false"
+                    class="per-page-selector d-inline-block mr-1"
+                  />
+                </div>
+                <div class="nowrap">
+                  <label class="mr-1">Presets</label>
+                  <v-select
+                    id="type"
+                    v-model="type"
+                    :options="types"
+                    :reduce="type => type.key"
+                    :clearable="false"
+                    label="label"
+                    class="type-selector d-inline-block mr-1"
+                  />
+                </div>
               </div>
             </div>
           </b-col>
@@ -344,7 +341,6 @@ import {
   BTooltip,
 } from 'bootstrap-vue'
 import { ref, computed, watch } from '@vue/composition-api'
-
 import vSelect from 'vue-select'
 import getAccounts from '@/http/getAccounts'
 

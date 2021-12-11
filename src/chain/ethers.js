@@ -3,6 +3,8 @@
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 
+const { utils } = ethers
+
 const connectMetamask = () => new Promise(resolve => {
   detectEthereumProvider().then(provider => {
     provider.request({ method: 'eth_requestAccounts' }).then(() => {
@@ -37,11 +39,15 @@ const getInjectedProvider = async addressCandidate => {
         // Do nothing
       }
     }
-
   } catch (e) {
     console.log(e)
   }
   return null
 }
 
-export default { connectMetamask, connectBinanceChain, getInjectedProvider }
+export default {
+  connectMetamask,
+  connectBinanceChain,
+  getInjectedProvider,
+  utils,
+}

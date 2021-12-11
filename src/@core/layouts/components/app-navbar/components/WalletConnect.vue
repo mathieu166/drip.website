@@ -74,7 +74,6 @@ import {
   BNavItemDropdown,
   BListGroupItem,
   BListGroup,
-  BBadge,
   BButton,
   BImg,
   BOverlay,

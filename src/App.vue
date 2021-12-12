@@ -7,7 +7,6 @@
     <component :is="layout">
       <router-view />
     </component>
-
     <scroll-to-top v-if="enableScrollToTop" />
   </div>
 </template>
@@ -18,7 +17,7 @@ import ScrollToTop from '@core/components/scroll-to-top/ScrollToTop.vue'
 // This will be populated in `beforeCreate` hook
 import { $themeColors, $themeBreakpoints, $themeConfig } from '@themeConfig'
 import { provideToast } from 'vue-toastification/composition'
-import { watch } from '@vue/composition-api'
+import { watch, ref } from '@vue/composition-api'
 import useAppConfig from '@core/app-config/useAppConfig'
 
 import { useWindowSize, useCssVar } from '@vueuse/core'
@@ -116,6 +115,20 @@ export default {
     watch(windowWidth, val => {
       store.commit('app/UPDATE_WINDOW_WIDTH', val)
     })
+
+    const oldConsole = console.log
+    console.log = message => {
+      if (message && message !== null) {
+        store.commit('app/ADD_TO_DEBUG_CONSOLE', `\r${message}`)
+        oldConsole(message)
+      }
+    }
+    console.error = message => {
+      if (message) {
+        store.commit('app/ADD_TO_DEBUG_CONSOLE', `\r${message}`)
+        oldConsole(message)
+      }
+    }
 
     return {
       skinClasses,

@@ -5,6 +5,7 @@ export default {
   state: {
     windowWidth: 0,
     shallShowOverlay: false,
+    debugConsole: '',
   },
   getters: {
     currentBreakPoint: state => {
@@ -17,6 +18,9 @@ export default {
     },
   },
   mutations: {
+    ADD_TO_DEBUG_CONSOLE(state, val) {
+      state.debugConsole += val
+    },
     UPDATE_WINDOW_WIDTH(state, val) {
       state.windowWidth = val
     },

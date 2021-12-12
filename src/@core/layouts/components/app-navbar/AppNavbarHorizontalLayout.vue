@@ -1,6 +1,5 @@
 <template>
   <div class="navbar-container d-flex content align-items-center">
-
     <!-- Nav Menu Toggler -->
     <ul class="nav navbar-nav d-xl-none">
       <li class="nav-item">
@@ -35,9 +34,7 @@
 </template>
 
 <script>
-import {
-  BLink, BNavbarNav,
-} from 'bootstrap-vue'
+import { BLink, BNavbarNav } from 'bootstrap-vue'
 import DarkToggler from './components/DarkToggler.vue'
 import WalletConnect from './components/WalletConnect.vue'
 

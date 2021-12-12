@@ -17,7 +17,7 @@ import ScrollToTop from '@core/components/scroll-to-top/ScrollToTop.vue'
 // This will be populated in `beforeCreate` hook
 import { $themeColors, $themeBreakpoints, $themeConfig } from '@themeConfig'
 import { provideToast } from 'vue-toastification/composition'
-import { watch, ref } from '@vue/composition-api'
+import { watch } from '@vue/composition-api'
 import useAppConfig from '@core/app-config/useAppConfig'
 
 import { useWindowSize, useCssVar } from '@vueuse/core'

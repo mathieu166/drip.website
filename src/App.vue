@@ -119,16 +119,19 @@ export default {
     const oldConsole = console.log
     console.log = message => {
       if (message && message !== null) {
-        store.commit('app/ADD_TO_DEBUG_CONSOLE', `\r${message}`)
+        const now = new Date()
+        store.commit('app/ADD_TO_DEBUG_CONSOLE', `${now.toLocaleDateString()} ${now.toLocaleTimeString()} - ${message}\r`)
         oldConsole(message)
       }
     }
     console.error = message => {
       if (message) {
-        store.commit('app/ADD_TO_DEBUG_CONSOLE', `\r${message}`)
+        store.commit('app/ADD_TO_DEBUG_CONSOLE', `${message}\r`)
         oldConsole(message)
       }
     }
+
+    console.log('\r')
 
     return {
       skinClasses,

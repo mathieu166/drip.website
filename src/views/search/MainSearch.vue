@@ -506,7 +506,7 @@ export default {
     ]);
     const type = ref("all");
     const filters = ref({ type, address: null, buddy_address: null });
-
+    
     let timeout;
     const manualRefresh = ref(false);
 
@@ -523,7 +523,7 @@ export default {
       }, 500);
     });
 
-    const fetchAccounts = (ctx, callback) => {
+    const fetchAccounts = function(ctx, callback) {
       isLoading.value = true;
       getAccounts(
         filters.value,
@@ -533,28 +533,33 @@ export default {
         isSortDirDesc.value,
         downloadLevel.value
       )
-        .then((response) => {
+        .then(function(response) {
           const accounts = response.data.results;
           totalAccounts.value = response.data.total;
-
           if(filters.value.buddy_address){
             tableColumns.unshift({ key: "level", sortable: true })
           }else{
             const removeIndex = tableColumns.findIndex( item => item.key === 'level' );
-            // remove object
-            tableColumns.splice( removeIndex, 1 );
+            
+            if(removeIndex >= 0){
+              tableColumns.splice( removeIndex, 1 );
+            }
+            
           }
 
           return callback(accounts);
         })
-        .finally(() => {
+        .catch(function(e){
+          console.error(e)
+        })
+        .finally(function() {
           isLoading.value = false;
         });
     };
 
     const clear = () => {
-      filters.value.address = null;
       filters.value.buddy_address = null;
+      filters.value.address = null;
       filters.value.name = null;
       type.value = "all";
 

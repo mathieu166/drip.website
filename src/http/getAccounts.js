@@ -14,6 +14,7 @@ export default function getAccounts(
   perPage,
   sortBy,
   isSortDesc,
+  downlineLevel,
 ) {
   let params = ''
 
@@ -28,7 +29,7 @@ export default function getAccounts(
 
   params += formatParam(`sortBy=${sortBy}`, params)
   params += formatParam(`sortByDesc=${isSortDesc ? '-1' : '1'}`, params)
+  params += formatParam(`downlineLevel=${downlineLevel}`, params)
 
-  console.log(params)
   return get('queryAccounts', params)
 }

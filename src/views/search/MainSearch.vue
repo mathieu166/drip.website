@@ -60,11 +60,18 @@
               </b-input-group>
             </form>
           </b-col>
+          <b-col
+            
+            cols="12"
+            md="6"
+            class="d-flex align-items-center justify-content-start mb-1 mb-sm-0"
+          >
+          </b-col>
         </b-row>
 
         <b-row>
           <b-col cols="12">
-            <div class="d-flex flex-md-row flex-column-reverse">
+            <div class="d-flex flex-lg-row flex-column-reverse">
               <div class="d-flex mt-1 mt-md-0">
                 <b-button
                   ref="btnSearch"
@@ -83,7 +90,7 @@
                   Clear
                 </b-button>
               </div>
-              <div class="d-flex flex-md-row flex-column-reverse mb-0">
+              <div class="d-flex flex-sm-row flex-column-reverse mb-1 mb-lg-0">
                 <div
                   class="
                     nowrap
@@ -106,9 +113,9 @@
                 <div
                   class="
                     nowrap
-                    mb-1 mb-md-0
+                    mb-1 mb-sm-0
                     d-flex
-                    flex-col flex-lg-row
+                    flex-col flex-sm-row
                     align-items-center
                   "
                 >
@@ -127,6 +134,31 @@
                       class="type-selector d-inline-block mr-1"
                     />
                   </div>
+                </div>
+              </div>
+              <div class="d-flex flex-sm-row flex-column-reverse mb-0">
+                <div
+                  v-if="filters.buddy_address"
+                  class="
+                    nowrap
+                    mb-1
+                    mb-lg-0
+                    d-flex
+                    flex-col flex-lg-row
+                    align-items-center
+                  "
+                >
+                  <label class="mr-1">Downline Levels</label>
+                  <v-select
+                    v-model="downloadLevel"
+                    :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                    :options="[
+                      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+                    ]"
+                    :clearable="false"
+                    :searchable="false"
+                    class="per-page-selector d-inline-block mr-1"
+                  />
                 </div>
               </div>
             </div>
@@ -202,9 +234,6 @@
 
         <template #cell(address)="data">
           <div class="d-flex">
-            <!-- <div :id="`address-${data.item.address}`">
-              {{ shortenAddress(data.item.address) }}
-            </div> -->
             <div>
               <b-dropdown
                 id="addressDD"
@@ -217,7 +246,7 @@
                     () => {
                       filters.buddy_address = data.item.address;
                       type = 'all';
-                      manualRefresh = true
+                      manualRefresh = true;
                     }
                   "
                 >
@@ -226,13 +255,6 @@
               </b-dropdown>
             </div>
           </div>
-          <!-- <b-tooltip
-            :target="`address-${data.item.address}`"
-            style="white-space: nowrap;"
-            placement="topleft"
-          >
-            {{ data.item.address }}
-          </b-tooltip> -->
         </template>
 
         <template #cell(timestamp)="data">
@@ -433,6 +455,7 @@ export default {
     const address = ref(null);
     const name = ref(null);
     const buddy = ref(null);
+    const downloadLevel = ref(1);
     const search = ref(() => {});
 
     // Table Handlers
@@ -485,10 +508,10 @@ export default {
     const filters = ref({ type, address: null, buddy_address: null });
 
     let timeout;
-    const manualRefresh = ref(false)
+    const manualRefresh = ref(false);
 
-    watch([currentPage, perPage, type, manualRefresh], () => {
-      manualRefresh.value = false
+    watch([currentPage, perPage, type, manualRefresh, downloadLevel], () => {
+      manualRefresh.value = false;
 
       if (timeout) {
         clearTimeout(timeout);
@@ -507,11 +530,21 @@ export default {
         currentPage.value,
         perPage.value,
         sortBy.value,
-        isSortDirDesc.value
+        isSortDirDesc.value,
+        downloadLevel.value
       )
         .then((response) => {
           const accounts = response.data.results;
           totalAccounts.value = response.data.total;
+
+          if(filters.value.buddy_address){
+            tableColumns.unshift({ key: "level", sortable: true })
+          }else{
+            const removeIndex = tableColumns.findIndex( item => item.key === 'level' );
+            // remove object
+            tableColumns.splice( removeIndex, 1 );
+          }
+
           return callback(accounts);
         })
         .finally(() => {
@@ -573,6 +606,7 @@ export default {
       setAddressToWallet,
       setBuddyToWallet,
       refetchData,
+      downloadLevel,
     };
   },
 };

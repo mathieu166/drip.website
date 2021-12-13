@@ -60,13 +60,12 @@
               </b-input-group>
             </form>
           </b-col>
-          <b-col
-            
+          <!-- <b-col
             cols="12"
             md="6"
             class="d-flex align-items-center justify-content-start mb-1 mb-sm-0"
           >
-          </b-col>
+          </b-col> -->
         </b-row>
 
         <b-row>
@@ -233,7 +232,10 @@
         </template>
 
         <template #cell(address)="data">
-          <div class="d-flex">
+          <div>
+            {{ shortenAddress(data.item.address) }}
+          </div>
+          <!-- <div class="d-flex">
             <div>
               <b-dropdown
                 id="addressDD"
@@ -254,7 +256,7 @@
                 </b-dropdown-item>
               </b-dropdown>
             </div>
-          </div>
+          </div> -->
         </template>
 
         <template #cell(timestamp)="data">
@@ -297,13 +299,31 @@
 
         <template #cell(referrals)="data">
           <div>
-            {{ excludeZero(data.item.referrals) }}
+             <b-button variant="link" @click="
+                    () => {
+                      filters.buddy_address = data.item.address;
+                      downloadLevel = 1
+                      type = 'all';
+                      manualRefresh = true;
+                    }
+                  ">
+              {{ excludeZero(data.item.referrals) }}
+            </b-button>
           </div>
         </template>
 
         <template #cell(total_structure)="data">
           <div>
-            {{ excludeZero(data.item.total_structure) }}
+            <b-button variant="link" @click="
+                    () => {
+                      filters.buddy_address = data.item.address;
+                      downloadLevel = 15
+                      type = 'all';
+                      manualRefresh = true;
+                    }
+                  ">
+              {{ excludeZero(data.item.total_structure) }}
+            </b-button>
           </div>
         </template>
 

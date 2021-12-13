@@ -210,6 +210,20 @@
           </b-col>
         </b-row>
       </div>
+
+      <div v-if="historicSearch.length > 0" class="mt-0">
+        <b-link class="ml-1 mr-1" href="#" @click="clearHistory"><feather-icon
+                icon="XIcon"
+                size="16"
+              /> </b-link>
+        <b-link href="#" :disabled="index === historicSearch.length - 1" v-for="(hist, index) in historicSearch" :key="hist.address"
+        @click="()=>{
+          filters.buddy_address = hist.address
+          downloadLevel = hist.level
+          historicSearch.length = hist.index + 1
+          refetchData()
+        }" >{{hist.short_address}} {{ index === historicSearch.length - 1?'>':'|'}} </b-link>
+      </div>
       <b-table
         ref="refAccountList"
         :items="fetchAccounts"
@@ -303,6 +317,9 @@
                     () => {
                       filters.buddy_address = data.item.address;
                       downloadLevel = 1
+
+                      historicSearch.push({index: historicSearch.length, address: filters.buddy_address, short_address: shortenAddress(data.item.address), level: downloadLevel})
+                                            
                       type = 'all';
                       manualRefresh = true;
                     }
@@ -318,6 +335,8 @@
                     () => {
                       filters.buddy_address = data.item.address;
                       downloadLevel = 15
+                      
+                      historicSearch.push({index: historicSearch.length, address: filters.buddy_address, short_address: shortenAddress(data.item.address), level: downloadLevel})
                       type = 'all';
                       manualRefresh = true;
                     }
@@ -407,6 +426,7 @@ import {
   BTooltip,
   BDropdown,
   BDropdownItem,
+  BLink,
 } from "bootstrap-vue";
 import { ref, computed, watch } from "@vue/composition-api";
 import vSelect from "vue-select";
@@ -431,6 +451,7 @@ export default {
     BInputGroupAppend,
     BDropdown,
     BDropdownItem,
+    BLink
     // Tour,
   },
   mounted() {
@@ -439,6 +460,9 @@ export default {
     };
   },
   methods: {
+    clearHistory(){
+      this.historicSearch = []
+    },
     shortenAddress(value) {
       if (value) {
         return `0x..${value.substr(value.length - 7)}`;
@@ -479,7 +503,8 @@ export default {
     const search = ref(() => {});
 
     // Table Handlers
-    const tableColumns = [
+    const tableColumns = ref([
+      { key: "level", sortable: true },
       { key: "address", sortable: true },
       { key: "name", sortable: true },
       { key: "net_deposits", label: "net deposits", sortable: true },
@@ -492,7 +517,7 @@ export default {
       { key: "lastAirdrop", sortable: true },
       { key: "timestamp", label: "joined on", sortable: true },
       // { key: 'actions' },
-    ];
+    ]);
 
     const perPage = ref(10);
     const totalAccounts = ref(0);
@@ -556,16 +581,18 @@ export default {
         .then(function(response) {
           const accounts = response.data.results;
           totalAccounts.value = response.data.total;
-          if(filters.value.buddy_address){
-            tableColumns.unshift({ key: "level", sortable: true })
-          }else{
-            const removeIndex = tableColumns.findIndex( item => item.key === 'level' );
+         
+         
+        //  if(filters.value.buddy_address){
+        //     tableColumns.value.unshift({ key: "level", sortable: true })
+        //   }else{
+        //     const removeIndex = tableColumns.value.findIndex( item => item.key === 'level' );
             
-            if(removeIndex >= 0){
-              tableColumns.splice( removeIndex, 1 );
-            }
+        //     if(removeIndex >= 0){
+        //       tableColumns.value.splice( removeIndex, 1 );
+        //     }
             
-          }
+        //   }
 
           return callback(accounts);
         })
@@ -576,11 +603,14 @@ export default {
           isLoading.value = false;
         });
     };
+    
+    const historicSearch = ref([])
 
     const clear = () => {
       filters.value.buddy_address = null;
       filters.value.address = null;
       filters.value.name = null;
+      historicSearch.value.length = 0
       type.value = "all";
 
       refetchData();
@@ -604,6 +634,7 @@ export default {
       filters.value.buddy_address = walletAddress.value;
       refetchData();
     };
+
 
     return {
       manualRefresh,
@@ -632,12 +663,17 @@ export default {
       setBuddyToWallet,
       refetchData,
       downloadLevel,
+      historicSearch,
     };
   },
 };
 </script>
 
 <style>
+a.disabled {
+  pointer-events: none;
+}
+
 #addressDD__BV_toggle_ {
   padding: 0px !important;
 }
@@ -653,4 +689,5 @@ export default {
 .type-selector {
   width: 250px;
 }
+
 </style>

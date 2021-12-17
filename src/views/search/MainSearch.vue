@@ -656,6 +656,7 @@ export default {
       filters.value.address = null;
       filters.value.name = null;
       historicSearch.value.length = 0
+      sortBy.value = "net_deposits"
       perPage.value = 10
       currentPage.value = 1
       totalAccounts.value = 0

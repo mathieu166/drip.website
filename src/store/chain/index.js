@@ -23,17 +23,18 @@ export default {
       state.provider = val
       if (val) {
         const signer = val.getSigner(0)
+        let tempAddress
         signer
           .getAddress()
           .then(result => {
-            state.address = result
-            localStorage.setItem('address', result)
+            tempAddress = result
+            // state.address = result
           })
           .then(() => {
             state.signature = null
             for (const sign of state.signatures) {
               const address = ethers.utils.verifyMessage(message, sign)
-              if (address === state.address) {
+              if (address === tempAddress) {
                 state.signature = sign
               }
             }
@@ -48,17 +49,19 @@ export default {
                     'signs',
                     JSON.stringify(state.signatures),
                   )
+                  state.address = tempAddress
                 })
                 .catch(() => {
                   state.provider = null
                   state.address = null
                 })
             }
+
+            state.address = tempAddress
           })
       } else {
         state.address = null
         state.signature = null
-        localStorage.removeItem('address')
       }
     },
   },

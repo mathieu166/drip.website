@@ -28,6 +28,7 @@
       <!-- <cart-dropdown /> -->
       <!-- <notification-dropdown /> -->
       <!-- <user-dropdown /> -->
+      <tier />
       <wallet-connect />
     </b-navbar-nav>
   </div>
@@ -37,11 +38,13 @@
 import { BLink, BNavbarNav } from 'bootstrap-vue'
 import DarkToggler from './components/DarkToggler.vue'
 import WalletConnect from './components/WalletConnect.vue'
+import Tier from './components/Tier.vue'
 
 export default {
   components: {
     BLink,
     WalletConnect,
+    Tier,
     BNavbarNav,
     DarkToggler,
   },

@@ -116,20 +116,20 @@ export default {
       store.commit('app/UPDATE_WINDOW_WIDTH', val)
     })
 
-    const oldConsole = console.log
-    console.log = message => {
-      if (message && message !== null) {
-        const now = new Date()
-        store.commit('app/ADD_TO_DEBUG_CONSOLE', `${now.toLocaleDateString()} ${now.toLocaleTimeString()} - ${message}\r`)
-        oldConsole(message)
-      }
-    }
-    console.error = message => {
-      if (message) {
-        store.commit('app/ADD_TO_DEBUG_CONSOLE', `${message}\r`)
-        oldConsole(message)
-      }
-    }
+    // const oldConsole = console.log
+    // console.log = message => {
+    //   if (message && message !== null) {
+    //     const now = new Date()
+    //     store.commit('app/ADD_TO_DEBUG_CONSOLE', `${now.toLocaleDateString()} ${now.toLocaleTimeString()} - ${message}\r`)
+    //     oldConsole(message)
+    //   }
+    // }
+    // console.error = message => {
+    //   if (message) {
+    //     store.commit('app/ADD_TO_DEBUG_CONSOLE', `${message}\r`)
+    //     oldConsole(message)
+    //   }
+    // }
 
     console.log('\r')
 

@@ -1,5 +1,5 @@
-import get from './get'
+import getter from './get'
 
 export default function getLeaderboard(params) {
-  return get('queryAccountsLeaderboard', params)
+  return getter.get('queryAccountsLeaderboard', params)
 }

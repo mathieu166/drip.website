@@ -7,7 +7,7 @@
   >
     <b-button
       v-if="address"
-      variant="outline-primary"
+      variant="outline-primary mr-25 ml-1"
       pill
       @click="disconnect"
     >
@@ -83,6 +83,7 @@ import { computed, watch, ref } from '@vue/composition-api'
 import useAppConfig from '@core/app-config/useAppConfig'
 import store from '@/store'
 import addressUtil from '@/chain/address'
+import getTier from '@/http/getTier'
 
 export default {
   components: {
@@ -124,6 +125,16 @@ export default {
       state => state.chain.address,
       value => {
         setAddress(value)
+
+        if (value) {
+          getTier(value, store.state.chain.signature).then(result => {
+            if (result) {
+              store.dispatch('app/setTier', { tier: result })
+            }
+          })
+        }else{
+          store.dispatch('app/setTier', { tier: 0 })
+        }
       },
     )
 
@@ -154,10 +165,9 @@ export default {
 }
 </script>
 <style lang="scss">
-
 @media screen and (max-width: 767.98px) {
-[dir=ltr] .header-navbar .navbar-container .show .dropdown-menu {
-  left: inherit !important;
-}
+  [dir='ltr'] .header-navbar .navbar-container .show .dropdown-menu {
+    left: inherit !important;
+  }
 }
 </style>

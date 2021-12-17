@@ -1,8 +1,9 @@
 <template>
-  <section id="ecommerce-header">
+  <section id="search-header">
     <!-- Table Container Card -->
     <b-card no-body>
       <div class="m-2">
+        <b-overlay :show="!allowSearch" opacity="0.85" rounded="sm">
         <b-row class="mb-1">
           <b-col cols="12" md="6" class="mb-1 mb-md-0">
             <form style="width: 100%" @submit.prevent="search">
@@ -149,7 +150,7 @@
                 >
                   <label class="mr-1">Downline Levels</label>
                   <v-select
-                    v-model="downloadLevel"
+                    v-model="downlineLevel"
                     :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                     :options="[
                       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
@@ -163,8 +164,16 @@
             </div>
           </b-col>
         </b-row>
+        <template #overlay>
+          <div>
+              <b-badge pill variant="danger" class="badge-glow">Connect Wallet</b-badge>
+
+          </div>
+        </template>
+        </b-overlay>
       </div>
-      <div class="mx-2 mb-2">
+
+      <div class="mx-2 mb-2" v-if="allowSearch">
         <b-row>
           <b-col
             cols="12"
@@ -219,7 +228,7 @@
         <b-link href="#" :disabled="index === historicSearch.length - 1" v-for="(hist, index) in historicSearch" :key="hist.address"
         @click="()=>{
           filters.buddy_address = hist.address
-          downloadLevel = hist.level
+          downlineLevel = hist.level
           historicSearch.length = hist.index + 1
           refetchData()
         }" >{{hist.short_address}} {{ index === historicSearch.length - 1?'>':'|'}} </b-link>
@@ -228,7 +237,7 @@
         ref="refAccountList"
         :items="fetchAccounts"
         responsive
-        :fields="tableColumns"
+        :fields="fields"
         :sort-by.sync="sortBy"
         :sort-desc.sync="isSortDirDesc"
         :busy="isLoading"
@@ -312,14 +321,17 @@
         </template>
 
         <template #cell(referrals)="data">
-          <div>
+          <div v-if="allowDrillDown">
              <b-button variant="link" @click="
                     () => {
                       filters.buddy_address = data.item.address;
-                      downloadLevel = 1
+                      
+                      downlineLevel = 1
 
-                      historicSearch.push({index: historicSearch.length, address: filters.buddy_address, short_address: shortenAddress(data.item.address), level: downloadLevel})
+                      historicSearch.push({index: historicSearch.length, address: filters.buddy_address, short_address: shortenAddress(data.item.address), level: downlineLevel})
                                             
+                      filters.address = null
+                      filters.name = null
                       type = 'all';
                       manualRefresh = true;
                     }
@@ -327,16 +339,19 @@
               {{ excludeZero(data.item.referrals) }}
             </b-button>
           </div>
+          <div v-else>{{ excludeZero(data.item.referrals) }}</div>
         </template>
 
         <template #cell(total_structure)="data">
-          <div>
+          <div v-if="allowDrillDown">
             <b-button variant="link" @click="
                     () => {
                       filters.buddy_address = data.item.address;
-                      downloadLevel = 15
+                      downlineLevel = 15
                       
-                      historicSearch.push({index: historicSearch.length, address: filters.buddy_address, short_address: shortenAddress(data.item.address), level: downloadLevel})
+                      historicSearch.push({index: historicSearch.length, address: filters.buddy_address, short_address: shortenAddress(data.item.address), level: downlineLevel})
+                      filters.address = null
+                      filters.name = null
                       type = 'all';
                       manualRefresh = true;
                     }
@@ -344,6 +359,7 @@
               {{ excludeZero(data.item.total_structure) }}
             </b-button>
           </div>
+          <div v-else>{{ excludeZero(data.item.total_structure) }}</div>
         </template>
 
         <template #cell(airdrops_total)="data">
@@ -357,7 +373,7 @@
           </div>
         </template>
       </b-table>
-      <div class="mx-2 mb-2">
+      <div class="mx-2 mb-2" v-if="allowSearch">
         <b-row>
           <b-col
             cols="12"
@@ -427,6 +443,8 @@ import {
   BDropdown,
   BDropdownItem,
   BLink,
+  BOverlay,
+  BBadge,
 } from "bootstrap-vue";
 import { ref, computed, watch } from "@vue/composition-api";
 import vSelect from "vue-select";
@@ -451,7 +469,9 @@ export default {
     BInputGroupAppend,
     BDropdown,
     BDropdownItem,
-    BLink
+    BLink,
+    BOverlay,
+    BBadge,
     // Tour,
   },
   mounted() {
@@ -499,12 +519,12 @@ export default {
     const address = ref(null);
     const name = ref(null);
     const buddy = ref(null);
-    const downloadLevel = ref(1);
+    const downlineLevel = ref(1);
     const search = ref(() => {});
 
     // Table Handlers
     const tableColumns = ref([
-      { key: "level", sortable: true },
+      { key: "level", sortable: true, hide: true },
       { key: "address", sortable: true },
       { key: "name", sortable: true },
       { key: "net_deposits", label: "net deposits", sortable: true },
@@ -519,12 +539,15 @@ export default {
       // { key: 'actions' },
     ]);
 
+    const fields = computed(()=> tableColumns.value.filter(f=> !f.hide))
+
     const perPage = ref(10);
     const totalAccounts = ref(0);
     const currentPage = ref(1);
     const perPageOptions = [5, 10, 25, 50, 100];
     const sortBy = ref("net_deposits");
     const isSortDirDesc = ref(false);
+    const allowDrillDown = ref(false)
 
     const dataMeta = computed(() => {
       const localItemsCount = refAccountList.value
@@ -555,7 +578,7 @@ export default {
     let timeout;
     const manualRefresh = ref(false);
 
-    watch([currentPage, perPage, type, manualRefresh, downloadLevel], () => {
+    watch([currentPage, perPage, type, manualRefresh, downlineLevel], () => {
       manualRefresh.value = false;
 
       if (timeout) {
@@ -569,34 +592,56 @@ export default {
     });
 
     const fetchAccounts = function(ctx, callback) {
+
+      // if(!store.state.chain.address){
+      //   sortBy.value = null
+      //   return
+      // }
+
       isLoading.value = true;
+
       getAccounts(
         filters.value,
         currentPage.value,
         perPage.value,
         sortBy.value,
         isSortDirDesc.value,
-        downloadLevel.value
+        downlineLevel.value,
+        store.state.chain.address,
+        store.state.chain.signature,
       )
         .then(function(response) {
           const accounts = response.data.results;
           totalAccounts.value = response.data.total;
-         
-         
-        //  if(filters.value.buddy_address){
-        //     tableColumns.value.unshift({ key: "level", sortable: true })
-        //   }else{
-        //     const removeIndex = tableColumns.value.findIndex( item => item.key === 'level' );
-            
-        //     if(removeIndex >= 0){
-        //       tableColumns.value.splice( removeIndex, 1 );
-        //     }
-            
-        //   }
+
+          const filteredColumns = response.data.filter
+          console.log(filteredColumns)
+          for(let col of tableColumns.value){
+            if(filteredColumns[col.key] === 1){
+              col.hide = false
+            }else{
+              col.hide = true
+            }
+          }
+
+          if(response.data.tier == 0){
+            allowDrillDown.value = false
+          }else{
+            allowDrillDown.value = true
+          }
+
+          const levelField = tableColumns.value.find(f=>f.key==='level')
+          if(downlineLevel.value > 1 && response.data.tier > 0 && totalAccounts.value>0 && accounts[0].level > 0){
+            levelField.hide = false
+          }else{
+            levelField.hide = true
+          }
 
           return callback(accounts);
         })
         .catch(function(e){
+          // isLoading.value = false;
+          callback([])
           console.error(e)
         })
         .finally(function() {
@@ -611,17 +656,42 @@ export default {
       filters.value.address = null;
       filters.value.name = null;
       historicSearch.value.length = 0
+      perPage.value = 10
+      currentPage.value = 1
+      totalAccounts.value = 0
       type.value = "all";
 
       refetchData();
     };
 
     const walletAddress = ref(null);
-
+    const allowSearch = ref(false)
     store.watch(
       (state) => state.chain.address,
       (addr) => {
         walletAddress.value = addr;
+        
+        if(addr){
+          allowSearch.value = true;
+        }else{
+          allowSearch.value = false;
+        }
+      }
+    );
+
+    const tier = ref(0)
+    store.watch(
+      (state) => state.app.tier,
+      (tierValue) => {
+        tier.value = tierValue
+        refetchData()
+      }
+    );
+
+    store.watch(
+      (state) => state.chain.address,
+      (addr) => {
+        clear()
       }
     );
 
@@ -635,8 +705,10 @@ export default {
       refetchData();
     };
 
-
     return {
+      allowSearch,
+      allowDrillDown,
+      fields,
       manualRefresh,
       filters,
       name,
@@ -662,7 +734,7 @@ export default {
       setAddressToWallet,
       setBuddyToWallet,
       refetchData,
-      downloadLevel,
+      downlineLevel,
       historicSearch,
     };
   },
@@ -677,6 +749,8 @@ a.disabled {
 #addressDD__BV_toggle_ {
   padding: 0px !important;
 }
+
+[dir] .dark-layout .bg-light{background-color:#161d31!important;}
 </style>
 
 <style lang="scss" scoped>
@@ -689,5 +763,4 @@ a.disabled {
 .type-selector {
   width: 250px;
 }
-
 </style>

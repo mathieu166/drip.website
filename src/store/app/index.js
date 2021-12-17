@@ -6,6 +6,7 @@ export default {
     windowWidth: 0,
     shallShowOverlay: false,
     debugConsole: '',
+    tier: 0,
   },
   getters: {
     currentBreakPoint: state => {
@@ -16,6 +17,7 @@ export default {
       if (windowWidth >= $themeBreakpoints.sm) return 'sm'
       return 'xs'
     },
+    getTier: state => state.tier,
   },
   mutations: {
     ADD_TO_DEBUG_CONSOLE(state, val) {
@@ -27,6 +29,13 @@ export default {
     TOGGLE_OVERLAY(state, val) {
       state.shallShowOverlay = val !== undefined ? val : !state.shallShowOverlay
     },
+    UPDATE_TIER(state, val) {
+      state.tier = val
+    },
   },
-  actions: {},
+  actions: {
+    setTier({ commit }, value) {
+      commit('UPDATE_TIER', value.tier)
+    },
+  },
 }

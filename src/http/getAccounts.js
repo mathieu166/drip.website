@@ -1,12 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import get from './get'
-
-const formatParam = (param, params) => {
-  if (params.length === 0) {
-    return param
-  }
-  return `&${param}`
-}
+import getter from './get'
 
 export default function getAccounts(
   filters,
@@ -15,21 +8,28 @@ export default function getAccounts(
   sortBy,
   isSortDesc,
   downlineLevel,
+  wallet,
+  signature,
 ) {
   let params = ''
 
   for (const [key, value] of Object.entries(filters)) {
     if (value) {
-      params += formatParam(`${key}=${value}`, params)
+      params += getter.formatParam(`${key}=${value}`, params)
     }
   }
 
-  params += formatParam(`page=${currentPage}`, params)
-  params += formatParam(`perPage=${perPage}`, params)
+  params += getter.formatParam(`page=${currentPage}`, params)
+  params += getter.formatParam(`perPage=${perPage}`, params)
 
-  params += formatParam(`sortBy=${sortBy}`, params)
-  params += formatParam(`sortByDesc=${isSortDesc ? '-1' : '1'}`, params)
-  params += formatParam(`downlineLevel=${downlineLevel}`, params)
+  params += getter.formatParam(`sortBy=${sortBy}`, params)
+  params += getter.formatParam(`sortByDesc=${isSortDesc ? '-1' : '1'}`, params)
+  params += getter.formatParam(`downlineLevel=${downlineLevel}`, params)
 
-  return get('queryAccounts', params)
+  if (wallet && signature) {
+    params += getter.formatParam(`wallet=${wallet}`, params)
+    params += getter.formatParam(`signature=${signature}`, params)
+  }
+
+  return getter.get('queryAccounts', params)
 }

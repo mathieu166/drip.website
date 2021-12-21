@@ -2,175 +2,185 @@
   <section id="search-header">
     <!-- Table Container Card -->
     <b-card no-body>
-      <div class="m-2">
+      <div>
         <b-overlay :show="!allowSearch" opacity="0.85" rounded="sm">
-        <b-row class="mb-1">
-          <b-col cols="12" md="6" class="mb-1 mb-md-0">
-            <form style="width: 100%" @submit.prevent="search">
-              <b-input-group class="input-group-merge">
-                <b-input-group-prepend is-text> Address </b-input-group-prepend>
-                <b-form-input
-                  v-model="filters.address"
-                  autocomplete="off"
-                  placeholder="0x000000000000000000000000000000000000"
-                />
-                <b-input-group-append v-if="walletAddress && tier > 0">
-                  <b-button
-                    variant="outline-dark"
-                    @click="setAddressToWallet()"
-                  >
-                    Me
-                  </b-button>
-                </b-input-group-append>
-              </b-input-group>
-            </form>
-          </b-col>
-          <b-col cols="12" md="6">
-            <form style="width: 100%" @submit.prevent="search">
-              <b-input-group class="input-group-merge">
-                <b-input-group-prepend is-text> Buddy </b-input-group-prepend>
-                <b-form-input
-                  v-model="filters.buddy_address"
-                  autocomplete="off"
-                  placeholder="0x000000000000000000000000000000000000"
-                />
-                <b-input-group-append v-if="walletAddress && tier > 0" >
-                  
-                    <b-button variant="outline-dark" :disabled="tier == 0"  @click="setBuddyToWallet()">
+          <div v-if="!allowSearch" class="m-1">
+            <b-row >
+              &nbsp;
+            </b-row>
+            <b-row >
+              &nbsp;
+            </b-row>
+          </div>
+        <div v-if="allowSearch" class="m-2">
+
+          <b-row class="mb-1">
+            <b-col cols="12" md="6" class="mb-1 mb-md-0">
+              <form style="width: 100%" @submit.prevent="search">
+                <b-input-group class="input-group-merge">
+                  <b-input-group-prepend is-text> Address </b-input-group-prepend>
+                  <b-form-input
+                    v-model="filters.address"
+                    autocomplete="off"
+                    placeholder="0x000000000000000000000000000000000000"
+                  />
+                  <b-input-group-append v-if="walletAddress && tier > 0">
+                    <b-button
+                      variant="outline-dark"
+                      @click="setAddressToWallet()"
+                    >
                       Me
                     </b-button>
-                  
-                </b-input-group-append>
-              </b-input-group>
-            </form>
-          </b-col>
-        </b-row>
-
-        <b-row class="mb-0 mb-md-1">
-          <b-col
-            cols="12"
-            md="6"
-            class="d-flex align-items-center justify-content-start mb-1 mb-md-0"
-          >
-            <form style="width: 100%" @submit.prevent="search">
-              <b-input-group class="input-group-merge">
-                <b-input-group-prepend is-text> Name </b-input-group-prepend>
-                <b-form-input
-                  v-model="filters.name"
-                  autocomplete="off"
-                  placeholder="Team XYZ"
-                />
-              </b-input-group>
-            </form>
-          </b-col>
-          <!-- <b-col
-            cols="12"
-            md="6"
-            class="d-flex align-items-center justify-content-start mb-1 mb-sm-0"
-          >
-          </b-col> -->
-        </b-row>
-
-        <b-row>
-          <b-col cols="12">
-            <div class="d-flex flex-lg-row flex-column-reverse">
-              <div class="d-flex mt-1 mt-md-0">
-                <b-button
-                  ref="btnSearch"
-                  variant="primary"
-                  class="mr-2"
-                  @click="search"
-                >
-                  Search
-                </b-button>
-                <b-button
-                  ref="btnSearch"
-                  variant="secondary"
-                  class="mr-2"
-                  @click="clear"
-                >
-                  Clear
-                </b-button>
-              </div>
-              <div class="d-flex flex-sm-row flex-column-reverse mb-1 mb-lg-0">
-                <div
-                  class="
-                    nowrap
-                    mb-0
-                    d-flex
-                    flex-col flex-lg-row
-                    align-items-center
-                  "
-                >
-                  <label class="mr-1">Entries</label>
-                  <v-select
-                    v-model="perPage"
-                    :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                    :options="perPageOptions"
-                    :clearable="false"
-                    :searchable="false"
-                    class="per-page-selector d-inline-block mr-1"
+                  </b-input-group-append>
+                </b-input-group>
+              </form>
+            </b-col>
+            <b-col cols="12" md="6">
+              <form style="width: 100%" @submit.prevent="search">
+                <b-input-group class="input-group-merge">
+                  <b-input-group-prepend is-text> Buddy </b-input-group-prepend>
+                  <b-form-input
+                    v-model="filters.buddy_address"
+                    autocomplete="off"
+                    placeholder="0x000000000000000000000000000000000000"
                   />
+                  <b-input-group-append v-if="walletAddress && tier > 0" >
+                    
+                      <b-button variant="outline-dark" :disabled="tier == 0"  @click="setBuddyToWallet()">
+                        Me
+                      </b-button>
+                    
+                  </b-input-group-append>
+                </b-input-group>
+              </form>
+            </b-col>
+          </b-row>
+
+          <b-row class="mb-0 mb-md-1">
+            <b-col
+              cols="12"
+              md="6"
+              class="d-flex align-items-center justify-content-start mb-1 mb-md-0"
+            >
+              <form style="width: 100%" @submit.prevent="search">
+                <b-input-group class="input-group-merge">
+                  <b-input-group-prepend is-text> Name </b-input-group-prepend>
+                  <b-form-input
+                    v-model="filters.name"
+                    autocomplete="off"
+                    placeholder="Team XYZ"
+                  />
+                </b-input-group>
+              </form>
+            </b-col>
+            <!-- <b-col
+              cols="12"
+              md="6"
+              class="d-flex align-items-center justify-content-start mb-1 mb-sm-0"
+            >
+            </b-col> -->
+          </b-row>
+
+          <b-row>
+            <b-col cols="12">
+              <div class="d-flex flex-lg-row flex-column-reverse">
+                <div class="d-flex mt-1 mt-md-0">
+                  <b-button
+                    ref="btnSearch"
+                    variant="primary"
+                    class="mr-2"
+                    @click="search"
+                  >
+                    Search
+                  </b-button>
+                  <b-button
+                    ref="btnSearch"
+                    variant="secondary"
+                    class="mr-2"
+                    @click="clear"
+                  >
+                    Clear
+                  </b-button>
                 </div>
-                <div
-                  class="
-                    nowrap
-                    mb-1 mb-sm-0
-                    d-flex
-                    flex-col flex-sm-row
-                    align-items-center
-                  "
-                >
-                  <div>
-                    <label class="mr-1">Presets</label>
-                  </div>
-                  <div>
+                <div class="d-flex flex-sm-row flex-column-reverse mb-1 mb-lg-0">
+                  <div
+                    class="
+                      nowrap
+                      mb-0
+                      d-flex
+                      flex-col flex-lg-row
+                      align-items-center
+                    "
+                  >
+                    <label class="mr-1">Entries</label>
                     <v-select
-                      id="type"
-                      v-model="type"
-                      :options="types"
-                      :reduce="(type) => type.key"
-                      :selectable="type => type.active"
+                      v-model="perPage"
+                      :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                      :options="perPageOptions"
                       :clearable="false"
-                      label="label"
                       :searchable="false"
-                      class="type-selector d-inline-block mr-1"
+                      class="per-page-selector d-inline-block mr-1"
+                    />
+                  </div>
+                  <div
+                    class="
+                      nowrap
+                      mb-1 mb-sm-0
+                      d-flex
+                      flex-col flex-sm-row
+                      align-items-center
+                    "
+                  >
+                    <div>
+                      <label class="mr-1">Presets</label>
+                    </div>
+                    <div>
+                      <v-select
+                        id="type"
+                        v-model="type"
+                        :options="types"
+                        :reduce="(type) => type.key"
+                        :selectable="type => type.active"
+                        :clearable="false"
+                        label="label"
+                        :searchable="false"
+                        class="type-selector d-inline-block mr-1"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex flex-sm-row flex-column-reverse mb-0">
+                  <div
+                    v-if="filters.buddy_address"
+                    class="
+                      nowrap
+                      mb-1
+                      mb-lg-0
+                      d-flex
+                      flex-col flex-lg-row
+                      align-items-center
+                    "
+                  >
+                    <label class="mr-1">Downline Levels</label>
+                    <v-select
+                      v-model="downlineLevel"
+                      :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                      :options="[
+                        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+                      ]"
+                      :clearable="false"
+                      :searchable="false"
+                      class="per-page-selector d-inline-block mr-1"
                     />
                   </div>
                 </div>
               </div>
-              <div class="d-flex flex-sm-row flex-column-reverse mb-0">
-                <div
-                  v-if="filters.buddy_address"
-                  class="
-                    nowrap
-                    mb-1
-                    mb-lg-0
-                    d-flex
-                    flex-col flex-lg-row
-                    align-items-center
-                  "
-                >
-                  <label class="mr-1">Downline Levels</label>
-                  <v-select
-                    v-model="downlineLevel"
-                    :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                    :options="[
-                      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-                    ]"
-                    :clearable="false"
-                    :searchable="false"
-                    class="per-page-selector d-inline-block mr-1"
-                  />
-                </div>
-              </div>
-            </div>
-          </b-col>
-        </b-row>
+            </b-col>
+          </b-row>
+        </div>
         <template #overlay>
           <div>
               <b-badge pill variant="danger" class="badge-glow">Connect Wallet</b-badge>
-
           </div>
         </template>
         </b-overlay>
@@ -236,6 +246,18 @@
           refetchData()
         }" >{{hist.short_address}} {{ index === historicSearch.length - 1?'>':'|'}} </b-link>
       </div>
+      
+      <div v-if='!allowSearch' class="d-flex flex-column align-items-center p-2">
+        <div>
+          <h4>
+            Don't want to connect?
+          </h4>
+        </div>
+        <div>
+          Here's a list of carefully verified team wallets:
+        </div>
+      </div>
+
       <b-table
         ref="refAccountList"
         :items="fetchAccounts"

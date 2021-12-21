@@ -316,7 +316,7 @@
         </template>
 
         <template #cell(timestamp)="data">
-          <div>
+          <div class="text-nowrap">
             {{ toDate(data.item.timestamp) }}
           </div>
         </template>
@@ -401,7 +401,7 @@
           </div>
         </template>
         <template #cell(lastAirdrop)="data">
-          <div>
+          <div class="text-nowrap">
             {{ toDate(data.item.lastAirdrop) }}
           </div>
         </template>

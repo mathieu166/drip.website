@@ -14,7 +14,7 @@
                   autocomplete="off"
                   placeholder="0x000000000000000000000000000000000000"
                 />
-                <b-input-group-append v-if="walletAddress">
+                <b-input-group-append v-if="walletAddress && tier > 0">
                   <b-button
                     variant="outline-dark"
                     @click="setAddressToWallet()"
@@ -34,10 +34,12 @@
                   autocomplete="off"
                   placeholder="0x000000000000000000000000000000000000"
                 />
-                <b-input-group-append v-if="walletAddress">
-                  <b-button variant="outline-dark" @click="setBuddyToWallet()">
-                    Me
-                  </b-button>
+                <b-input-group-append v-if="walletAddress && tier > 0" >
+                  
+                    <b-button variant="outline-dark" :disabled="tier == 0"  @click="setBuddyToWallet()">
+                      Me
+                    </b-button>
+                  
                 </b-input-group-append>
               </b-input-group>
             </form>
@@ -128,6 +130,7 @@
                       v-model="type"
                       :options="types"
                       :reduce="(type) => type.key"
+                      :selectable="type => type.active"
                       :clearable="false"
                       label="label"
                       :searchable="false"
@@ -256,7 +259,9 @@
 
         <template #cell(address)="data">
           <div>
-            {{ shortenAddress(data.item.address) }}
+            <b-link target="_blank" :href="'https://drip.community/faucet?buddy='+data.item.address">
+              {{ shortenAddress(data.item.address) }}
+            </b-link>
           </div>
           <!-- <div class="d-flex">
             <div>
@@ -280,6 +285,12 @@
               </b-dropdown>
             </div>
           </div> -->
+        </template>
+
+        <template #cell(name)="data">
+          <div class="text-nowrap">
+            {{ data.item.name }}
+          </div>
         </template>
 
         <template #cell(timestamp)="data">
@@ -420,6 +431,7 @@
         </b-row>
       </div>
     </b-card>
+    <welcome ref='welcome'/>
   </section>
 </template>
 
@@ -450,6 +462,7 @@ import { ref, computed, watch } from "@vue/composition-api";
 import vSelect from "vue-select";
 import getAccounts from "@/http/getAccounts";
 import store from "@/store";
+import Welcome from '@/views/welcome/Welcome.vue'
 // import Tour from './Tour.vue'
 
 export default {
@@ -472,14 +485,22 @@ export default {
     BLink,
     BOverlay,
     BBadge,
+    Welcome
     // Tour,
   },
   mounted() {
     this.search = () => {
       this.refAccountList.refresh();
     };
+
+    if (!store.state.app.intro){
+      setTimeout(this.showWelcome, 1500)
+    }
   },
   methods: {
+    showWelcome(){
+      this.$refs.welcome.show()
+    },
     clearHistory(){
       this.historicSearch = []
     },
@@ -525,7 +546,7 @@ export default {
     // Table Handlers
     const tableColumns = ref([
       { key: "level", sortable: true, hide: true },
-      { key: "address", sortable: true },
+      { key: "address", sortable: false },
       { key: "name", sortable: true },
       { key: "net_deposits", label: "net deposits", sortable: true },
       { key: "deposits", sortable: true },
@@ -548,6 +569,7 @@ export default {
     const sortBy = ref("net_deposits");
     const isSortDirDesc = ref(false);
     const allowDrillDown = ref(false)
+    const tier = ref(0)
 
     const dataMeta = computed(() => {
       const localItemsCount = refAccountList.value
@@ -567,12 +589,12 @@ export default {
       refAccountList.value.refresh();
     };
 
-    const types = ref([
-      { key: "all", label: "All Drippers" },
-      { key: "faucet", label: "Faucet Drippers" },
-      { key: "team", label: "Team Wallet ( > 5 directs)" },
+    const types = computed(()=>[
+      { key: "all", label: "All Drippers" + (tier.value == 0? " <Paid only>":""), active: tier.value > 0},
+      { key: "faucet", label: "Faucet Drippers" + (tier.value == 0? " <Paid only>":""), active: tier.value > 0},
+      { key: "team", label: "Team Wallet ( >= 5 directs)", active: true },
     ]);
-    const type = ref("all");
+    const type = ref("team");
     const filters = ref({ type, address: null, buddy_address: null });
     
     let timeout;
@@ -593,11 +615,6 @@ export default {
 
     const fetchAccounts = function(ctx, callback) {
 
-      // if(!store.state.chain.address){
-      //   sortBy.value = null
-      //   return
-      // }
-
       isLoading.value = true;
 
       getAccounts(
@@ -615,7 +632,6 @@ export default {
           totalAccounts.value = response.data.total;
 
           const filteredColumns = response.data.filter
-          console.log(filteredColumns)
           for(let col of tableColumns.value){
             if(filteredColumns[col.key] === 1){
               col.hide = false
@@ -660,7 +676,7 @@ export default {
       perPage.value = 10
       currentPage.value = 1
       totalAccounts.value = 0
-      type.value = "all";
+      type.value = tier.value == 0? "team" : "all";
 
       refetchData();
     };
@@ -680,11 +696,22 @@ export default {
       }
     );
 
-    const tier = ref(0)
     store.watch(
       (state) => state.app.tier,
       (tierValue) => {
         tier.value = tierValue
+        if(tierValue == 0){
+          type.value = 'team'
+
+          // types.forEach(t=>{
+          //   if(t.key !== 'team'){
+          //     t.is_active
+          //   }
+          // })
+
+        }else{
+          type.value = 'all'
+        }
         refetchData()
       }
     );
@@ -707,6 +734,7 @@ export default {
     };
 
     return {
+      tier,
       allowSearch,
       allowDrillDown,
       fields,

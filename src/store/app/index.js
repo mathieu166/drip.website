@@ -7,6 +7,7 @@ export default {
     shallShowOverlay: false,
     debugConsole: '',
     tier: 0,
+    intro: 'd',
   },
   getters: {
     currentBreakPoint: state => {
@@ -20,6 +21,9 @@ export default {
     getTier: state => state.tier,
   },
   mutations: {
+    INIT(state) {
+      state.intro = localStorage.getItem('intro')
+    },
     ADD_TO_DEBUG_CONSOLE(state, val) {
       state.debugConsole += val
     },
@@ -32,10 +36,20 @@ export default {
     UPDATE_TIER(state, val) {
       state.tier = val
     },
+    UPDATE_INTRO(state, val) {
+      state.intro = val
+      localStorage.setItem('intro', val)
+    },
   },
   actions: {
+    init({ commit }) {
+      commit('INIT')
+    },
     setTier({ commit }, value) {
       commit('UPDATE_TIER', value.tier)
+    },
+    setIntro({ commit }, value) {
+      commit('UPDATE_INTRO', value)
     },
   },
 }

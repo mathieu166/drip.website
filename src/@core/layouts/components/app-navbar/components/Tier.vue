@@ -1,5 +1,8 @@
 <template>
-  <b-badge variant="primary">
+  <b-badge
+    v-if="show"
+    variant="primary"
+  >
     <feather-icon
       icon="StarIcon"
       class="mr-25"
@@ -36,7 +39,24 @@ export default {
       },
     )
 
-    return { tier, tierName, tierNames }
+    const show = ref(false)
+    store.watch(
+      state => state.chain.address,
+      value => {
+        if (value) {
+          show.value = true
+        } else {
+          show.value = false
+        }
+      },
+    )
+
+    return {
+      tier,
+      tierName,
+      tierNames,
+      show,
+    }
   },
   methods: {},
 }

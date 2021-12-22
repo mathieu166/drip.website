@@ -83,7 +83,7 @@ import { computed, watch, ref } from '@vue/composition-api'
 import useAppConfig from '@core/app-config/useAppConfig'
 import store from '@/store'
 import addressUtil from '@/chain/address'
-import getTier from '@/http/getTier'
+// import getTier from '@/http/getTier'
 
 export default {
   components: {
@@ -124,17 +124,17 @@ export default {
     store.watch(
       state => state.chain.address,
       value => {
-        setAddress(value)
+        setAddress(value) 
 
-        if (value) {
-          getTier(value, store.state.chain.signature).then(result => {
-            if (result) {
-              store.dispatch('app/setTier', { tier: result })
-            }
-          })
-        }else{
-          store.dispatch('app/setTier', { tier: 0 })
-        }
+        // if (value) {
+        //   getTier(value, store.state.chain.signature).then(result => {
+        //     if (result) {
+        //       store.dispatch('app/setTier', { tier: result })
+        //     }
+        //   })
+        // }else{
+        //   store.dispatch('app/setTier', { tier: 0 })
+        // }
       },
     )
 

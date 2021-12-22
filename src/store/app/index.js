@@ -6,7 +6,6 @@ export default {
     windowWidth: 0,
     shallShowOverlay: false,
     debugConsole: '',
-    tier: 0,
     intro: 'd',
   },
   getters: {
@@ -18,7 +17,6 @@ export default {
       if (windowWidth >= $themeBreakpoints.sm) return 'sm'
       return 'xs'
     },
-    getTier: state => state.tier,
   },
   mutations: {
     INIT(state) {
@@ -33,9 +31,6 @@ export default {
     TOGGLE_OVERLAY(state, val) {
       state.shallShowOverlay = val !== undefined ? val : !state.shallShowOverlay
     },
-    UPDATE_TIER(state, val) {
-      state.tier = val
-    },
     UPDATE_INTRO(state, val) {
       state.intro = val
       localStorage.setItem('intro', val)
@@ -44,9 +39,6 @@ export default {
   actions: {
     init({ commit }) {
       commit('INIT')
-    },
-    setTier({ commit }, value) {
-      commit('UPDATE_TIER', value.tier)
     },
     setIntro({ commit }, value) {
       commit('UPDATE_INTRO', value)

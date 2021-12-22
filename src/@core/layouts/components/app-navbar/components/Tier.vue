@@ -33,7 +33,7 @@ export default {
     const tierName = computed(() => tierNames.value[tier.value])
 
     store.watch(
-      state => state.app.tier,
+      state => state.chain.tier,
       value => {
         tier.value = value
       },

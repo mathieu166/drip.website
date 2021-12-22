@@ -719,18 +719,11 @@ export default {
     );
 
     store.watch(
-      (state) => state.app.tier,
+      (state) => state.chain.tier,
       (tierValue) => {
         tier.value = tierValue
         if(tierValue == 0){
           type.value = 'team'
-
-          // types.forEach(t=>{
-          //   if(t.key !== 'team'){
-          //     t.is_active
-          //   }
-          // })
-
         }else{
           type.value = 'all'
         }

@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 import ethers from '../../chain/ethers'
+import getTier from '@/http/getTier'
 
 const message = 'You signature is required to identify your registration plan.'
 
@@ -10,6 +11,7 @@ export default {
     address: null,
     signatures: [],
     signature: null,
+    tier: 0,
   },
   getters: {},
   mutations: {
@@ -49,7 +51,14 @@ export default {
                     'signs',
                     JSON.stringify(state.signatures),
                   )
-                  state.address = tempAddress
+
+                  return getTier(tempAddress, sign).then(result => {
+                    if (result) {
+                      state.tier = result
+                      state.address = tempAddress
+                    }
+                  }).catch(() => { state.tier = 0 })
+
                 })
                 .catch(() => {
                   state.provider = null
@@ -57,7 +66,13 @@ export default {
                 })
             }
 
-            state.address = tempAddress
+            return getTier(tempAddress, state.signature).then(result => {
+              if (result) {
+                state.tier = result
+                state.address = tempAddress
+              }
+            }).catch(() => { state.tier = 0 })
+
           })
       } else {
         state.address = null

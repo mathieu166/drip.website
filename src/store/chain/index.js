@@ -53,12 +53,12 @@ export default {
                   )
 
                   return getTier(tempAddress, sign).then(result => {
-                    if (result) {
-                      state.tier = result
-                      state.address = tempAddress
-                    }
-                  }).catch(() => { state.tier = 0 })
-
+                    state.tier = result
+                    state.address = tempAddress
+                  }).catch(e => {
+                    console.log(e)
+                    state.tier = 0
+                  })
                 })
                 .catch(() => {
                   state.provider = null
@@ -67,12 +67,12 @@ export default {
             }
 
             return getTier(tempAddress, state.signature).then(result => {
-              if (result) {
-                state.tier = result
-                state.address = tempAddress
-              }
-            }).catch(() => { state.tier = 0 })
-
+              state.tier = result
+              state.address = tempAddress
+            }).catch(e => {
+              console.log(e)
+              state.tier = 0
+            })
           })
       } else {
         state.address = null

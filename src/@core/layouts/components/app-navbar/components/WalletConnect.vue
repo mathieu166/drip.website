@@ -124,7 +124,7 @@ export default {
     store.watch(
       state => state.chain.address,
       value => {
-        setAddress(value) 
+        setAddress(value)
 
         // if (value) {
         //   getTier(value, store.state.chain.signature).then(result => {

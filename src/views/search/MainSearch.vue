@@ -3,20 +3,11 @@
     <!-- Table Container Card -->
     <b-card no-body>
       <div>
-        <b-overlay :show="!allowSearch" opacity="0.85" rounded="sm">
-          <div v-if="!allowSearch" class="m-1">
-            <b-row >
-              &nbsp;
-            </b-row>
-            <b-row >
-              &nbsp;
-            </b-row>
-          </div>
-        <div v-if="allowSearch" class="m-2">
+        <div class="m-2">
 
           <b-row class="mb-1">
             <b-col cols="12" md="6" class="mb-1 mb-md-0">
-              <form style="width: 100%" @submit.prevent="search">
+              <form style="width: 100%" @submit.prevent="refetchData()">
                 <b-input-group class="input-group-merge">
                   <b-input-group-prepend is-text> Address </b-input-group-prepend>
                   <b-form-input
@@ -36,7 +27,7 @@
               </form>
             </b-col>
             <b-col cols="12" md="6">
-              <form style="width: 100%" @submit.prevent="search">
+              <form style="width: 100%" @submit.prevent="refetchData()">
                 <b-input-group class="input-group-merge">
                   <b-input-group-prepend is-text> Buddy </b-input-group-prepend>
                   <b-form-input
@@ -62,7 +53,7 @@
               md="6"
               class="d-flex align-items-center justify-content-start mb-1 mb-md-0"
             >
-              <form style="width: 100%" @submit.prevent="search">
+              <form style="width: 100%" @submit.prevent="refetchData()">
                 <b-input-group class="input-group-merge">
                   <b-input-group-prepend is-text> Name </b-input-group-prepend>
                   <b-form-input
@@ -89,7 +80,7 @@
                     ref="btnSearch"
                     variant="primary"
                     class="mr-2"
-                    @click="search"
+                    @click="refetchData()"
                   >
                     Search
                   </b-button>
@@ -178,15 +169,10 @@
             </b-col>
           </b-row>
         </div>
-        <template #overlay>
-          <div>
-              <b-badge pill variant="danger" class="badge-glow">Connect Wallet</b-badge>
-          </div>
-        </template>
-        </b-overlay>
+        
       </div>
 
-      <div class="mx-2 mb-2" v-if="allowSearch">
+      <div class="mx-2 mb-2">
         <b-row>
           <b-col
             cols="12"
@@ -246,17 +232,6 @@
           refetchData()
         }" >{{hist.short_address}} {{ index === historicSearch.length - 1?'>':'|'}} </b-link>
       </div>
-      
-      <div v-if='!allowSearch' class="d-flex flex-column align-items-center p-2">
-        <div>
-          <h4>
-            Don't want to connect?
-          </h4>
-        </div>
-        <div>
-          Here's a list of carefully verified team wallets:
-        </div>
-      </div>
 
       <b-table
         ref="refAccountList"
@@ -298,7 +273,6 @@
                     () => {
                       filters.buddy_address = data.item.address;
                       type = 'all';
-                      manualRefresh = true;
                     }
                   "
                 >
@@ -366,7 +340,8 @@
                       filters.address = null
                       filters.name = null
                       type = 'all';
-                      manualRefresh = true;
+
+                      refetchData()
                     }
                   ">
               {{ excludeZero(data.item.referrals) }}
@@ -386,7 +361,7 @@
                       filters.address = null
                       filters.name = null
                       type = 'all';
-                      manualRefresh = true;
+                      refetchData()
                     }
                   ">
               {{ excludeZero(data.item.total_structure) }}
@@ -406,7 +381,7 @@
           </div>
         </template>
       </b-table>
-      <div class="mx-2 mb-2" v-if="allowSearch">
+      <div class="mx-2 mb-2">
         <b-row>
           <b-col
             cols="12"
@@ -511,10 +486,6 @@ export default {
     // Tour,
   },
   mounted() {
-    this.search = () => {
-      this.refAccountList.refresh();
-    };
-
     if (!store.state.app.intro){
       setTimeout(this.showWelcome, 1500)
     }
@@ -563,7 +534,6 @@ export default {
     const name = ref(null);
     const buddy = ref(null);
     const downlineLevel = ref(1);
-    const search = ref(() => {});
 
     // Table Handlers
     const tableColumns = ref([
@@ -591,7 +561,7 @@ export default {
     const sortBy = ref("net_deposits");
     const isSortDirDesc = ref(false);
     const allowDrillDown = ref(false)
-    const tier = ref(0)
+    const tier = ref(store.state.chain.tier)
 
     const dataMeta = computed(() => {
       const localItemsCount = refAccountList.value
@@ -612,18 +582,17 @@ export default {
     };
 
     const types = computed(()=>[
-      { key: "all", label: "All Drippers" + (tier.value == 0? " <Paid only>":""), active: tier.value > 0},
-      { key: "faucet", label: "Faucet Drippers" + (tier.value == 0? " <Paid only>":""), active: tier.value > 0},
+      { key: "all", label: "All Drippers", active: true},
+      { key: "faucet", label: "Faucet Drippers", active: true},
       { key: "team", label: "Team Wallet ( >= 5 directs)", active: true },
     ]);
-    const type = ref("team");
+    const type = ref("all");
     const filters = ref({ type, address: null, buddy_address: null });
     
     let timeout;
-    const manualRefresh = ref(false);
 
-    watch([currentPage, perPage, type, manualRefresh, downlineLevel], () => {
-      manualRefresh.value = false;
+
+    watch([currentPage, perPage, type, downlineLevel], () => {
 
       if (timeout) {
         clearTimeout(timeout);
@@ -635,11 +604,12 @@ export default {
       }, 500);
     });
 
+    var nonce = 0;
     const fetchAccounts = function(ctx, callback) {
-
       isLoading.value = true;
-
+      
       getAccounts(
+        ++nonce,
         filters.value,
         currentPage.value,
         perPage.value,
@@ -650,6 +620,10 @@ export default {
         store.state.chain.signature,
       )
         .then(function(response) {
+          if(nonce.toString() !== response.data.nonce){
+            return Promise.solve()
+          }
+
           const accounts = response.data.results;
           totalAccounts.value = response.data.total;
 
@@ -698,23 +672,16 @@ export default {
       perPage.value = 10
       currentPage.value = 1
       totalAccounts.value = 0
-      type.value = tier.value == 0? "team" : "all";
+      type.value = "all";
 
       refetchData();
     };
 
-    const walletAddress = ref(null);
-    const allowSearch = ref(false)
+    const walletAddress = ref(store.state.chain.address);
     store.watch(
       (state) => state.chain.address,
       (addr) => {
         walletAddress.value = addr;
-        
-        if(addr){
-          allowSearch.value = true;
-        }else{
-          allowSearch.value = false;
-        }
       }
     );
 
@@ -722,11 +689,6 @@ export default {
       (state) => state.chain.tier,
       (tierValue) => {
         tier.value = tierValue
-        if(tierValue == 0){
-          type.value = 'team'
-        }else{
-          type.value = 'all'
-        }
         refetchData()
       }
     );
@@ -750,13 +712,10 @@ export default {
 
     return {
       tier,
-      allowSearch,
       allowDrillDown,
       fields,
-      manualRefresh,
       filters,
       name,
-      search,
       clear,
       sortBy,
       isSortDirDesc,

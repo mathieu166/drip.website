@@ -25,6 +25,7 @@ route: [route_obj/route_name] (I have to resolve name somehow from the route obj
 */
 // import leaderboards from './leaderboards'
 import search from './search'
+import shop from './shop'
 // import dashboard from './dashboard'
 // import apps from './apps'
 // import pages from './pages'
@@ -37,6 +38,7 @@ import search from './search'
 export default [
   // ...leaderboards,
   ...search,
+  // ...shop,
   // ...dashboard,
   // ...apps,
   // ...uiElements,

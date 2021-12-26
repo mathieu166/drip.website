@@ -1,7 +1,8 @@
 <template>
+<!-- updated here underlined was active -->
   <li
     class="nav-item"
-    :class="{'sidebar-group-active active': isActive}"
+    :class="{'sidebar-group-active underlined': isActive}"
   >
     <b-link
       class="nav-link"
@@ -53,3 +54,11 @@ export default {
   },
 }
 </script>
+<style>
+.underlined {
+  color: blue !important;
+  border-bottom:1px solid #fff;
+  padding:5px;
+  margin:2px;
+}
+</style>

@@ -2,6 +2,7 @@
 import getter from './get'
 
 export default function getAccounts(
+  nonce,
   filters,
   currentPage,
   perPage,
@@ -18,7 +19,7 @@ export default function getAccounts(
       params += getter.formatParam(`${key}=${value}`, params)
     }
   }
-
+  params += getter.formatParam(`nonce=${nonce}`, params)
   params += getter.formatParam(`page=${currentPage}`, params)
   params += getter.formatParam(`perPage=${perPage}`, params)
 

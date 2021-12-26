@@ -5,6 +5,7 @@ import VueRouter from 'vue-router'
 // import apps from './routes/apps'
 // import leaderboards from './routes/leaderboards'
 import search from './routes/search'
+import shop from './routes/shop'
 import dashboard from './routes/dashboard'
 // import uiElements from './routes/ui-elements/index'
 // import pages from './routes/pages'
@@ -26,6 +27,7 @@ const router = new VueRouter({
     { path: '/', redirect: { name: defaultMenu } },
     // ...leaderboards,
     ...search,
+    ...shop,
     // ...apps,
     ...dashboard,
     // ...pages,

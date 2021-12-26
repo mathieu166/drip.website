@@ -31,6 +31,7 @@ tagVariant
 
 */
 import search from './search'
+import shop from './shop'
 
 // Array of sections
-export default [...search]
+export default [...search/*, ...shop*/]

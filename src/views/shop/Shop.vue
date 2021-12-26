@@ -125,11 +125,7 @@
                 class="mt-2"
                 variant="outline-success"
               >
-                {{
-                  tier == 0
-                    ? 'Your current plan'
-                    : 'You have a higher tier'
-                }}
+                {{ tier == 0 ? 'Your current plan' : 'You have a higher tier' }}
               </b-button>
             </b-card>
           </b-col>

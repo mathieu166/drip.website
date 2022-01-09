@@ -131,7 +131,7 @@ export default {
     //   }
     // }
 
-    console.log('\r')
+    // console.log('\r')
 
     return {
       skinClasses,

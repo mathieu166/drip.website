@@ -20,52 +20,18 @@
           class="text-primary"
           badge-classes="badge-danger badge-glow"
         />
-        DripNetwork.ca Search Engine
+        DripNetwork.ca
       </h3>
       <div class="mb-1">
-        You're new to Drip Network and wonder what team you should be joining?
-        DripNetwork.ca provides a free tier search engine that allows you to
-        search for team wallets. Simply start by connecting your wallet to the
-        site and click on Tour if you want some assistance.
-      </div>
-      <h4>
-        <feather-icon
-          icon="CornerDownRightIcon"
-          size="21"
-          class="text-secondary mr-1"
-          badge-classes="badge-danger badge-glow"
-        />Advanced Search
-      </h4>
-      <b-badge
-        variant="dark"
-        class="mr-1"
-      >
-        <feather-icon icon="StarIcon" />
-        <span>Bronze</span>
-      </b-badge>
-      <b-badge
-        variant="secondary"
-        class="mr-1"
-      >
-        <feather-icon icon="StarIcon" />
-        <span>Silver</span>
-      </b-badge>
-      <b-badge variant="success">
-        <feather-icon icon="StarIcon" />
-        <span>Gold</span>
-      </b-badge>
-      <div class="mb-1">
-        <div class="mb-1">
-          You want more than the free tier? You can upgrade to higher tier to
-          unlocked advanced searching features starting at only 1 DRIP after
-          tax.
-        </div>
-        <div>
-          Visit the
-          <b-link to="/search">
-            Shop
-          </b-link>
-        </div>
+        DripNetwork.ca was made available to the Drip community to provide a
+        variety of tools and analytics. Currently, there is only a Search engine
+        available that allows users to look at the full Drip account database. A
+        free version is available by default, no need to connect your wallet,
+        but for the more curious, connect and go to the
+        <b-link to="/shop">
+          Shop
+        </b-link>
+        to upgrade to a higher tier.
       </div>
       <h4>
         <feather-icon
@@ -88,7 +54,7 @@
 
         <div>
           Visit the
-          <b-link to="/search">
+          <b-link to="/shop">
             Shop
           </b-link>
         </div>

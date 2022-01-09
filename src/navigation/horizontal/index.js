@@ -38,7 +38,7 @@ import shop from './shop'
 export default [
   // ...leaderboards,
   ...search,
-  // ...shop,
+  ...shop,
   // ...dashboard,
   // ...apps,
   // ...uiElements,

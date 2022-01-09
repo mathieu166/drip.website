@@ -1,10 +1,9 @@
 <template>
   <section id="search-header">
-    <!-- Table Container Card -->
     <b-card no-body>
       <div>
         <div class="m-2">
-
+          <!-- Address & Buddy fields -->
           <b-row class="mb-1">
             <b-col cols="12" md="6" class="mb-1 mb-md-0">
               <form style="width: 100%" @submit.prevent="refetchData()">
@@ -64,17 +63,46 @@
                 </b-input-group>
               </form>
             </b-col>
-            <!-- <b-col
+            <b-col
               cols="12"
               md="6"
               class="d-flex align-items-center justify-content-start mb-1 mb-sm-0"
+              v-if="tier > 0"
             >
-            </b-col> -->
+            <b-input-group>
+              <b-input-group-prepend>
+                   <v-select
+                    v-model="filters.joinedOnMode"
+                    :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                    label="label"
+                    :options="joinedOnModes"
+                    :reduce="(type) => type.key"
+                    :selectable="type => type.active"
+                    :clearable="false"
+                    :searchable="false"
+                    class="date-type-selector"
+                  />
+              </b-input-group-prepend>
+
+              <flat-pickr v-if="filters.joinedOnMode === 'range'"
+                v-model="filters.joinedOnRange"
+                class="form-control"
+                :config="{ mode: 'range'}"
+              /> 
+              <flat-pickr v-if="filters.joinedOnMode !== 'range'"
+                v-model="filters.joinedOn"
+                class="form-control"
+                :config="{ mode: 'single'}"
+              /> 
+            </b-input-group>
+            
+            </b-col>
           </b-row>
 
           <b-row>
             <b-col cols="12">
               <div class="d-flex flex-lg-row flex-column-reverse">
+                <!-- Search & Clear buttons -->
                 <div class="d-flex mt-1 mt-md-0">
                   <b-button
                     ref="btnSearch"
@@ -93,6 +121,7 @@
                     Clear
                   </b-button>
                 </div>
+                <!-- Entries & Presets dropdowns -->
                 <div class="d-flex flex-sm-row flex-column-reverse mb-1 mb-lg-0">
                   <div
                     class="
@@ -140,9 +169,10 @@
                     </div>
                   </div>
                 </div>
+                <!-- Downline dropdown -->
                 <div class="d-flex flex-sm-row flex-column-reverse mb-0">
                   <div
-                    v-if="filters.buddy_address"
+                    v-if="tier > 0 && filters.buddy_address"
                     class="
                       nowrap
                       mb-1
@@ -455,11 +485,13 @@ import {
   BOverlay,
   BBadge,
 } from "bootstrap-vue";
+import flatPickr from 'vue-flatpickr-component'
 import { ref, computed, watch } from "@vue/composition-api";
 import vSelect from "vue-select";
 import getAccounts from "@/http/getAccounts";
 import store from "@/store";
 import Welcome from '@/views/welcome/Welcome.vue'
+import moment from 'moment'
 // import Tour from './Tour.vue'
 
 export default {
@@ -482,13 +514,14 @@ export default {
     BLink,
     BOverlay,
     BBadge,
-    Welcome
+    Welcome,
+    flatPickr,
     // Tour,
   },
   mounted() {
-    if (!store.state.app.intro){
-      setTimeout(this.showWelcome, 1500)
-    }
+    // if (!store.state.app.intro){
+    //   setTimeout(this.showWelcome, 1500)
+    // }
   },
   methods: {
     showWelcome(){
@@ -508,7 +541,8 @@ export default {
         return "";
       }
 
-      return new Date(value * 1000).toLocaleDateString();
+      const theDate = new Date(value * 1000)
+      return `${theDate.getUTCFullYear()}-${(theDate.getUTCMonth()+1).toString().padStart(2, '0')}-${theDate.getUTCDate().toString().padStart(2, '0')}`
     },
     toFixed(value, decimals, defaultValue) {
       if (!value) {
@@ -534,6 +568,13 @@ export default {
     const name = ref(null);
     const buddy = ref(null);
     const downlineLevel = ref(1);
+
+    const joinedOnModes = computed(()=>[
+      { key: "single", label: "Joined On", active: true},
+      { key: "range", label: "Joined Between", active: true},
+      { key: "gt", label: "Joined After", active: true },
+      { key: "lt", label: "Joined Before", active: true },
+    ]);
 
     // Table Handlers
     const tableColumns = ref([
@@ -587,10 +628,15 @@ export default {
       { key: "team", label: "Team Wallet ( >= 5 directs)", active: true },
     ]);
     const type = ref("all");
-    const filters = ref({ type, address: null, buddy_address: null });
+    const filters = ref(
+      { type, 
+        address: null, 
+        buddy_address: null,
+        joinedOnMode: 'single',
+      }
+    );
     
     let timeout;
-
 
     watch([currentPage, perPage, type, downlineLevel], () => {
 
@@ -621,7 +667,7 @@ export default {
       )
         .then(function(response) {
           if(nonce.toString() !== response.data.nonce){
-            return Promise.solve()
+            return Promise.resolve()
           }
 
           const accounts = response.data.results;
@@ -667,6 +713,9 @@ export default {
       filters.value.buddy_address = null;
       filters.value.address = null;
       filters.value.name = null;
+      filters.value.joinedOnMode = 'single'
+      filters.value.joinedOn = null
+      filters.value.joinedOnRange = ''
       historicSearch.value.length = 0
       sortBy.value = "net_deposits"
       perPage.value = 10
@@ -739,6 +788,7 @@ export default {
       refetchData,
       downlineLevel,
       historicSearch,
+      joinedOnModes,
     };
   },
 };
@@ -757,6 +807,8 @@ a.disabled {
 </style>
 
 <style lang="scss" scoped>
+@import '@core/scss/vue/libs/vue-flatpicker.scss';
+
 .form-control {
   height: inherit;
 }
@@ -765,5 +817,8 @@ a.disabled {
 }
 .type-selector {
   width: 250px;
+}
+.date-type-selector {
+  width: 180px;
 }
 </style>

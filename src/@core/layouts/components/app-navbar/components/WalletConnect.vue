@@ -1,10 +1,5 @@
 <template>
-  <b-overlay
-    :show="loading"
-    :variant="overlayMode"
-    spinner-type="border"
-    rounded="sm"
-  >
+  <div>
     <b-button
       v-if="address"
       variant="outline-primary mr-25 ml-1"
@@ -30,43 +25,53 @@
       </template>
 
       <b-list-group id="walletSelect">
-        <b-list-group-item
-          href="#"
-          @click="connectMetamask"
+        <b-overlay
+          :show="mmLoading"
+          rounded="sm"
         >
-          <div class="d-flex align-items-center">
-            <b-img
-              left
-              class="mb-1 mb-sm-0"
-              height="50"
-              :src="require('@/assets/images/wallets/mm.svg')"
-              alt="Left image')"
-            />
-            <h4 class="ml-3 d-lg">
-              METAMASK
-            </h4>
-          </div>
-        </b-list-group-item>
-        <b-list-group-item
-          href="#"
-          @click="connectBinanceChain"
+          <b-list-group-item
+            href="#"
+            @click="connectMetamask"
+          >
+            <div class="d-flex align-items-center">
+              <b-img
+                left
+                class="mb-1 mb-sm-0"
+                height="50"
+                :src="require('@/assets/images/wallets/mm.svg')"
+                alt="Left image')"
+              />
+              <h4 class="ml-3 d-lg">
+                METAMASK
+              </h4>
+            </div>
+          </b-list-group-item>
+        </b-overlay>
+        <b-overlay
+          :show="bcLoading"
+          rounded="sm"
         >
-          <div class="d-flex align-items-center">
-            <b-img
-              left
-              class="mb-1 mb-sm-0"
-              height="50"
-              :src="require('@/assets/images/wallets/bc.jpeg')"
-              alt="Left image')"
-            />
-            <h4 class="ml-3 d-xs-none">
-              BINANCE CHAIN
-            </h4>
-          </div>
-        </b-list-group-item>
+          <b-list-group-item
+            href="#"
+            @click="connectBinanceChain"
+          >
+            <div class="d-flex align-items-center">
+              <b-img
+                left
+                class="mb-1 mb-sm-0"
+                height="50"
+                :src="require('@/assets/images/wallets/bc.jpeg')"
+                alt="Left image')"
+              />
+              <h4 class="ml-3 d-xs-none">
+                BINANCE CHAIN
+              </h4>
+            </div>
+          </b-list-group-item>
+        </b-overlay>
       </b-list-group>
     </b-nav-item-dropdown>
-  </b-overlay>
+  </div>
 </template>
 
 <script>
@@ -98,6 +103,8 @@ export default {
     const address = ref(null)
     const loading = ref(store.state.chain.loading)
     const { skin } = useAppConfig()
+    const mmLoading = ref(false)
+    const bcLoading = ref(false)
 
     const overlayMode = computed(() => {
       if (skin.value === 'dark') {
@@ -125,16 +132,8 @@ export default {
       state => state.chain.address,
       value => {
         setAddress(value)
-
-        // if (value) {
-        //   getTier(value, store.state.chain.signature).then(result => {
-        //     if (result) {
-        //       store.dispatch('app/setTier', { tier: result })
-        //     }
-        //   })
-        // }else{
-        //   store.dispatch('app/setTier', { tier: 0 })
-        // }
+        mmLoading.value = false
+        bcLoading.value = false
       },
     )
 
@@ -149,13 +148,21 @@ export default {
       },
     )
 
-    return { address, loading, overlayMode }
+    return {
+      address,
+      loading,
+      overlayMode,
+      mmLoading,
+      bcLoading,
+    }
   },
   methods: {
     connectBinanceChain() {
+      this.bcLoading = true
       store.dispatch('chain/connectBinanceChain')
     },
     connectMetamask() {
+      this.mmLoading = true
       store.dispatch('chain/connectMetamask')
     },
     disconnect() {

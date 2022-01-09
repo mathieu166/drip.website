@@ -13,13 +13,35 @@ export default {
     signature: null,
     tier: 0,
   },
-  getters: {},
+  getters: {
+    getPayeesDetail: state => {
+      if (!state.provider || !state.address || !state.signature) {
+        throw new Error('Wallet must be connected')
+      }
+
+      return {
+        provider: state.provider,
+        address: state.address,
+        signature: state.signature,
+        message: state.message,
+      }
+    },
+  },
   mutations: {
     UPDATE_SIGNS(state, val) {
       state.signatures = val
     },
     UPDATE_LOADING(state, val) {
       state.loading = val
+    },
+    UPDATE_TIER(state) {
+      return getTier(state.address, state.signature)
+        .then(result => {
+          state.tier = result
+        })
+        .catch(e => {
+          console.log(e)
+        })
     },
     UPDATE_PROVIDER(state, val) {
       state.provider = val
@@ -52,13 +74,15 @@ export default {
                     JSON.stringify(state.signatures),
                   )
 
-                  return getTier(tempAddress, sign).then(result => {
-                    state.tier = result
-                    state.address = tempAddress
-                  }).catch(e => {
-                    console.log(e)
-                    state.tier = 0
-                  })
+                  return getTier(tempAddress, sign)
+                    .then(result => {
+                      state.tier = result
+                      state.address = tempAddress
+                    })
+                    .catch(e => {
+                      console.log(e)
+                      state.tier = 0
+                    })
                 })
                 .catch(() => {
                   state.provider = null
@@ -66,17 +90,20 @@ export default {
                 })
             }
 
-            return getTier(tempAddress, state.signature).then(result => {
-              state.tier = result
-              state.address = tempAddress
-            }).catch(e => {
-              console.log(e)
-              state.tier = 0
-            })
+            return getTier(tempAddress, state.signature)
+              .then(result => {
+                state.tier = result
+                state.address = tempAddress
+              })
+              .catch(e => {
+                console.log(e)
+                state.tier = 0
+              })
           })
       } else {
         state.address = null
         state.signature = null
+        state.tier = 0
       }
     },
   },
@@ -84,6 +111,9 @@ export default {
     init({ commit }) {
       const signatures = localStorage.getItem('signs') || '[]'
       commit('UPDATE_SIGNS', JSON.parse(signatures))
+    },
+    updateSignedUser({ commit }) {
+      commit('UPDATE_TIER')
     },
     connectMetamask({ commit }) {
       ethers.connectMetamask().then(provider => {

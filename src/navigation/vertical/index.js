@@ -34,4 +34,4 @@ import search from './search'
 import shop from './shop'
 
 // Array of sections
-export default [...search/*, ...shop*/]
+export default [...search, ...shop]

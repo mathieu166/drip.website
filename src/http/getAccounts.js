@@ -16,7 +16,7 @@ export default function getAccounts(
 
   for (const [key, value] of Object.entries(filters)) {
     if (value) {
-      params += getter.formatParam(`${key}=${value}`, params)
+      params += getter.formatParam(`${key}=${value.trim()}`, params)
     }
   }
   params += getter.formatParam(`nonce=${nonce}`, params)

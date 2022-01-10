@@ -491,8 +491,6 @@ import vSelect from "vue-select";
 import getAccounts from "@/http/getAccounts";
 import store from "@/store";
 import Welcome from '@/views/welcome/Welcome.vue'
-import moment from 'moment'
-// import Tour from './Tour.vue'
 
 export default {
   components: {
@@ -519,6 +517,7 @@ export default {
     // Tour,
   },
   mounted() {
+    
     // if (!store.state.app.intro){
     //   setTimeout(this.showWelcome, 1500)
     // }

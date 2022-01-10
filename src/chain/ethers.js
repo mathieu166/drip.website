@@ -5,20 +5,20 @@ import { ethers } from 'ethers'
 
 const { utils } = ethers
 
-const connectMetamask = () => new Promise(resolve => {
+const connectMetamask = () => new Promise((resolve, reject) => {
   detectEthereumProvider().then(provider => {
     provider.request({ method: 'eth_requestAccounts' }).then(() => {
       resolve(new ethers.providers.Web3Provider(provider))
-    })
+    }).catch(e => reject(e))
   })
 })
 
-const connectBinanceChain = () => new Promise(resolve => {
+const connectBinanceChain = () => new Promise((resolve, reject) => {
   const provider = window.BinanceChain
   if (provider) {
     provider.request({ method: 'eth_accounts' }).then(() => {
       resolve(new ethers.providers.Web3Provider(provider))
-    })
+    }).catch(e => reject(e))
   }
 })
 

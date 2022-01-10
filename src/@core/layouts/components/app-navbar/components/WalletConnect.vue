@@ -11,6 +11,7 @@
 
     <b-nav-item-dropdown
       v-if="!address"
+      ref="dropdown"
       class="dropdown-notification mr-25"
       menu-class="dropdown-menu-media"
       right
@@ -106,23 +107,14 @@ export default {
     const mmLoading = ref(false)
     const bcLoading = ref(false)
 
+    const dropdown = ref(null)
+
     const overlayMode = computed(() => {
       if (skin.value === 'dark') {
         return 'dark'
       }
       return 'light'
     })
-
-    watch(
-      computed(() => skin.value),
-      () => {
-        if (skin.value === 'dark') {
-          overlayMode.value = 'dark'
-        } else {
-          overlayMode.value = 'light'
-        }
-      },
-    )
 
     const setAddress = value => {
       address.value = addressUtil.shorten(value)
@@ -154,16 +146,61 @@ export default {
       overlayMode,
       mmLoading,
       bcLoading,
+      dropdown,
     }
   },
   methods: {
     connectBinanceChain() {
       this.bcLoading = true
-      store.dispatch('chain/connectBinanceChain')
+      const vm = this
+      store
+        .dispatch('chain/connectBinanceChain')
+        .then(() => {
+          vm.$bvToast.toast('Connection Successful', {
+            toaster: 'b-toaster-top-center',
+            title: 'Success',
+            variant: 'success',
+            solid: true,
+          })
+        })
+        .catch(e => {
+          vm.$bvToast.toast(`${e.message}`, {
+            toaster: 'b-toaster-top-center',
+            title: 'Error',
+            variant: 'danger',
+            solid: true,
+          })
+        })
+        .finally(() => {
+          this.bcLoading = false
+          this.$refs.dropdown.hide()
+        })
     },
     connectMetamask() {
       this.mmLoading = true
-      store.dispatch('chain/connectMetamask')
+      const vm = this
+      store
+        .dispatch('chain/connectMetamask')
+        .then(() => {
+          vm.$bvToast.toast('Connection Successful', {
+            toaster: 'b-toaster-top-center',
+            title: 'Success',
+            variant: 'success',
+            solid: true,
+          })
+        })
+        .catch(e => {
+          vm.$bvToast.toast(`${e.message}`, {
+            toaster: 'b-toaster-top-center',
+            title: 'Error',
+            variant: 'danger',
+            solid: true,
+          })
+        })
+        .finally(() => {
+          this.mmLoading = false
+          this.$refs.dropdown.hide()
+        })
     },
     disconnect() {
       store.dispatch('chain/disconnect')

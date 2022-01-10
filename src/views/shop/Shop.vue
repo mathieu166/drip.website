@@ -327,6 +327,7 @@ export default {
         .payFor(product, store)
         .then(() => {
           vm.$bvToast.toast('Purchase completed', {
+            toaster: 'b-toaster-top-center',
             title: 'Success',
             variant: 'success',
             solid: true,
@@ -334,6 +335,7 @@ export default {
         })
         .catch(e => {
           vm.$bvToast.toast(`${e.message}`, {
+            toaster: 'b-toaster-top-center',
             title: 'Error',
             variant: 'danger',
             solid: true,

@@ -43,5 +43,8 @@ export default {
     setIntro({ commit }, value) {
       commit('UPDATE_INTRO', value)
     },
+    log({ commit }, value) {
+      commit('ADD_TO_DEBUG_CONSOLE', value)
+    },
   },
 }

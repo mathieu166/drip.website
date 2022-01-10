@@ -48,7 +48,7 @@ export default {
       if (val) {
         const signer = val.getSigner(0)
         let tempAddress
-        signer
+        return signer
           .getAddress()
           .then(result => {
             tempAddress = result
@@ -100,11 +100,12 @@ export default {
                 state.tier = 0
               })
           })
-      } else {
-        state.address = null
-        state.signature = null
-        state.tier = 0
       }
+
+      state.address = null
+      state.signature = null
+      state.tier = 0
+      return Promise.resolve()
     },
   },
   actions: {
@@ -116,14 +117,10 @@ export default {
       commit('UPDATE_TIER')
     },
     connectMetamask({ commit }) {
-      ethers.connectMetamask().then(provider => {
-        commit('UPDATE_PROVIDER', provider)
-      })
+      return ethers.connectMetamask().then(provider => commit('UPDATE_PROVIDER', provider))
     },
     connectBinanceChain({ commit }) {
-      ethers.connectBinanceChain().then(provider => {
-        commit('UPDATE_PROVIDER', provider)
-      })
+      return ethers.connectBinanceChain().then(provider => commit('UPDATE_PROVIDER', provider))
     },
     disconnect({ commit }) {
       commit('UPDATE_PROVIDER', null)

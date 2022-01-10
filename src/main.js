@@ -40,6 +40,18 @@ require('@core/scss/core.scss')
 // import assets styles
 require('@/assets/scss/style.scss')
 
+const { log, error } = console
+
+console.log = messages => {
+  store.dispatch('app/log', messages)
+  log('log', messages)
+}
+
+console.error = messages => {
+  store.dispatch('app/log', messages)
+  error('error', messages)
+}
+
 Vue.config.productionTip = false
 new Vue({
   router,
